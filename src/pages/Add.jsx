@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import ShowData from "./ShowData";
 
 const NAME = "finance_tracker";
@@ -27,14 +27,13 @@ const accountData = [
 ];
 
 const Add = () => {
-  const [showData, setShowData] = React.useState();
-
-
-  useEffect(()=>{
+  useEffect(() => {
     if (getData() !== false) {
-        setShowData(getData());
-      }
-  },[showData])
+      setShowData(getData());
+    }
+  }, []);
+  const [showData, setShowData] = useState();
+
   const getData = () => {
     if (localStorage.getItem(NAME)) {
       return JSON.parse(localStorage.getItem(NAME));
@@ -82,7 +81,12 @@ const Add = () => {
     };
 
     setData(newData);
+
+    if (getData() !== false) {
+      setShowData(getData());
+    }
   };
+
   return (
     <>
       <h1>Finance Tracker</h1>
@@ -94,9 +98,9 @@ const Add = () => {
         <div>
           <label htmlFor="">Month Year</label>
           <select name="monthYear">
-            <option selected hidden disabled>
-              Select Month-Year
-            </option>
+          {/* <option selected hidden disabled>
+              Select Month year
+            </option> */}
             {monthsNames.map((month, i) => (
               <option value={month} key={i}>
                 {month}
@@ -108,9 +112,9 @@ const Add = () => {
         <div>
           <label htmlFor="">Transaction Type</label>
           <select name="transactionType">
-            <option selected hidden disabled>
+            {/* <option selected hidden disabled>
               Select Transaction type
-            </option>
+            </option> */}
             {transactionTypes.map((t, i) => (
               <option value={t} key={i}>
                 {t}
@@ -122,9 +126,9 @@ const Add = () => {
         <div>
           <label htmlFor="">Transaction: From Account</label>
           <select name="fromAccount">
-            <option selected hidden disabled>
+            {/* <option selected hidden disabled>
               From Account
-            </option>
+            </option> */}
             {accountData.map((a, i) => (
               <option value={a} key={i}>
                 {a}
@@ -136,9 +140,9 @@ const Add = () => {
         <div>
           <label htmlFor="">Transaction: To Account</label>
           <select name="toAccount">
-            <option selected hidden disabled>
+            {/* <option selected hidden disabled>
               To Account
-            </option>
+            </option> */}
             {accountData.map((a, i) => (
               <option value={a} key={i}>
                 {a}
@@ -168,7 +172,7 @@ const Add = () => {
       </form>
 
       <div>
-        <ShowData data={showData}/>
+        <ShowData data={showData} />
       </div>
     </>
   );
