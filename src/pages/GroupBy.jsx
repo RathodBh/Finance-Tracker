@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { columns } from "./Add";
 
-const GroupBy = ({ data, oldData, setData }) => {
+const GroupBy = ({ oldData, setData }) => {
   const [toggleRemove, setToggleRemove] = useState("d-none");
   const setGroupBy = (e) => {
     setToggleRemove("");
@@ -26,8 +26,8 @@ const GroupBy = ({ data, oldData, setData }) => {
   return (
     <>
       <div className="allCenter">
-        <select name="groupBy" onChange={setGroupBy} className="w-50"> 
-          <option value="" selected hidden disabled>
+        <select name="groupBy" onChange={setGroupBy} className="w-50" defaultValue={""}> 
+          <option value="" disabled>
             Select group by column
           </option>
           {columns.map((c, i) => (

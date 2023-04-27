@@ -3,10 +3,11 @@ import { Link, useLocation } from "react-router-dom";
 
 import MaterialTable from "./MaterialTable";
 
-
 const ShowData = ({ data, oldData }) => {
   const [tempData, setTempData] = useState([{}]);
   const [sortMethod, setSortMethod] = useState(1);
+
+  const [scroll, setScroll] = useState(0);
 
   useEffect(() => {
     if (Array.isArray(data)) {
@@ -35,10 +36,14 @@ const ShowData = ({ data, oldData }) => {
 
       Object.keys(cloneData).forEach((obj) => {
         if (obj === title) {
-          if (sortMethod === 1) { 
-            cloneData[obj] = cloneData[obj].sort((a, b) => (a[name] > b[name] ? 1 : -1));
+          if (sortMethod === 1) {
+            cloneData[obj] = cloneData[obj].sort((a, b) =>
+              a[name] > b[name] ? 1 : -1
+            );
           } else if (sortMethod === 2) {
-            cloneData[obj] = cloneData[obj].sort((a, b) => (a[name] < b[name] ? 1 : -1));
+            cloneData[obj] = cloneData[obj].sort((a, b) =>
+              a[name] < b[name] ? 1 : -1
+            );
           }
         }
       });
@@ -48,7 +53,13 @@ const ShowData = ({ data, oldData }) => {
   return (
     <>
       {Array.isArray(data) && data.length > 0 && (
-        <MaterialTable sort={sort} arr={tempData} sortMethod={sortMethod} />
+        <MaterialTable
+          sort={sort}
+          arr={tempData}
+          sortMethod={sortMethod}
+          scroll={scroll}
+          setScroll={setScroll}
+        />
       )}
 
       {data && !Array.isArray(data) && (
@@ -59,6 +70,8 @@ const ShowData = ({ data, oldData }) => {
               sort={sort}
               arr={data[curKey]}
               sortMethod={sortMethod}
+              scroll={scroll}
+              setScroll={setScroll}
             />
           ))}
         </>

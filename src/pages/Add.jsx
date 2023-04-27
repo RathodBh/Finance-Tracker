@@ -4,6 +4,7 @@ import GroupBy from "./GroupBy";
 
 //MUI
 import { Button } from "@mui/material";
+import Search from "./Search";
 
 const NAME = "finance_tracker";
 export const columns = [
@@ -73,8 +74,7 @@ const setData = (data) => {
   const oldData = getData();
   if (oldData !== false)
     localStorage.setItem(NAME, JSON.stringify([data, ...oldData]));
-  else 
-    localStorage.setItem(NAME, JSON.stringify([data]))
+  else localStorage.setItem(NAME, JSON.stringify([data]));
 };
 const Add = () => {
   useEffect(() => {
@@ -85,6 +85,41 @@ const Add = () => {
   }, []);
   const [showData, setShowData] = useState();
   const [oldData, setOldData] = useState();
+  const [err, setErr] = useState({});
+
+  const checkVal = (
+    condition,
+    errName,
+    msg,
+    condition2 = false,
+    msg2 = "",
+    condition3 = false,
+    msg3 = ""
+  ) => {
+    if (condition) {
+      setErr((err) => ({
+        ...err,
+        [errName]: msg,
+      }));
+    } else if (condition2) {
+      setErr((err) => ({
+        ...err,
+        [errName]: msg2,
+      }));
+    } else if (condition3) {
+      setErr((err) => ({
+        ...err,
+        [errName]: msg3,
+      }));
+    } else {
+      setErr((err) => ({
+        ...err,
+        [errName]: "",
+      }));
+      return true;
+    }
+    return false;
+  };
 
   const toBase64 = (file) =>
     new Promise((resolve, reject) => {
@@ -98,37 +133,74 @@ const Add = () => {
     e.preventDefault();
     const ele = e.target;
 
-
     const transDate = ele.transDate.value;
     const monthYear = ele.monthYear.value;
     const transactionType = ele.transactionType.value;
     const fromAccount = ele.fromAccount.value;
     const toAccount = ele.toAccount.value;
     const amount = ele.amount.value;
-    const formatAmount = parseInt(amount).toLocaleString("en-IN");
+    // const formatAmount = parseInt(amount).toLocaleString("en-IN");
     const notes = ele.notes.value;
 
-      const receipt = ele.receipt.files[0];
-      const receiptInBase64 = await toBase64(receipt);
-  
-    const uniqueId = new Date().getTime()
-    const newData = {
-      id: uniqueId,
-      transDate: transDate,
-      monthYear: monthYear,
-      transactionType: transactionType,
-      fromAccount: fromAccount,
-      toAccount: toAccount,
-      amount: formatAmount,
-      notes: notes,
-      receipt: receiptInBase64,
-    };
+    const receipt = ele.receipt.files[0];
+    let receiptInBase64 = null;
+    if (!!receipt) {
+      receiptInBase64 = await toBase64(receipt);
+    }
 
-    setData(newData);
+    //validation error
+    const Err1 = checkVal(
+      transDate.length === 0,
+      "transDateErr",
+      "Please select a transaction date"
+    );
+    const Err2 = checkVal(
+      monthYear.length === 0,
+      "monthYearErr",
+      "Please select a month Year"
+    );
+    const Err3 = checkVal(
+      transactionType.length === 0,
+      "transactionTypeErr",
+      "Please select a transaction type"
+    );
+    const Err4 = checkVal(
+      fromAccount.length === 0,
+      "fromAccountErr",
+      "Please select a transaction from account"
+    );
+    const Err5 = checkVal(
+      toAccount.length === 0,
+      "toAccountErr",
+      "Please select a transaction to account"
+    );
+    const Err6 = checkVal(
+      amount.length === 0,
+      "amountErr",
+      "Please enter amount"
+    );
+    const Err7 = checkVal(notes.length === 0, "notesErr", "Please enter note");
 
-    if (getData() !== false) {
-      setShowData(getData());
-      setOldData(getData());
+    if (Err1 && Err2 && Err3 && Err4 && Err5 && Err6 && Err7) {
+      const uniqueId = new Date().getTime();
+      const newData = {
+        id: uniqueId,
+        transDate: transDate,
+        monthYear: monthYear,
+        transactionType: transactionType,
+        fromAccount: fromAccount,
+        toAccount: toAccount,
+        amount: amount,
+        notes: notes,
+        receipt: receiptInBase64,
+      };
+
+      setData(newData);
+
+      if (getData() !== false) {
+        setShowData(getData());
+        setOldData(getData());
+      }
     }
   };
 
@@ -140,11 +212,12 @@ const Add = () => {
           <div>
             <label htmlFor="">Transaction date</label>
             <input type="date" name="transDate" />
+            <span className="err">{err.transDateErr}</span>
           </div>
           <div>
             <label htmlFor="">Month Year</label>
-            <select name="monthYear">
-              <option selected hidden disabled>
+            <select name="monthYear" defaultValue={""}>
+              <option  hidden disabled value="">
                 Select Month year
               </option>
               {monthsNames.map((month, i) => (
@@ -153,12 +226,13 @@ const Add = () => {
                 </option>
               ))}
             </select>
+            <span className="err">{err.monthYearErr}</span>
           </div>
 
           <div>
             <label htmlFor="">Transaction Type</label>
-            <select name="transactionType">
-              <option selected hidden disabled>
+            <select name="transactionType" defaultValue={""}>
+              <option  disabled value="">
                 Select Transaction type
               </option>
               {transactionTypes.map((t, i) => (
@@ -167,12 +241,13 @@ const Add = () => {
                 </option>
               ))}
             </select>
+            <span className="err">{err.transactionTypeErr}</span>
           </div>
 
           <div>
             <label htmlFor="">Transaction: From Account</label>
-            <select name="fromAccount">
-              <option selected hidden disabled>
+            <select name="fromAccount" defaultValue={""}>
+              <option  disabled value="">
                 From Account
               </option>
               {accountData.map((a, i) => (
@@ -181,12 +256,13 @@ const Add = () => {
                 </option>
               ))}
             </select>
+            <span className="err">{err.fromAccountErr}</span>
           </div>
 
           <div>
             <label htmlFor="">Transaction: To Account</label>
-            <select name="toAccount">
-              <option selected hidden disabled>
+            <select name="toAccount" defaultValue={""}>
+              <option  disabled value="">
                 To Account
               </option>
               {accountData.map((a, i) => (
@@ -195,11 +271,13 @@ const Add = () => {
                 </option>
               ))}
             </select>
+            <span className="err">{err.toAccountErr}</span>
           </div>
 
           <div>
             <label htmlFor="">Amount:</label>
             <input type="number" name="amount" />
+            <span className="err">{err.amountErr}</span>
           </div>
 
           <div>
@@ -210,17 +288,24 @@ const Add = () => {
           <div>
             <label htmlFor="">Notes:</label>
             <textarea name="notes" />
+            <span className="err">{err.notesErr}</span>
           </div>
 
           <div>
-            <Button variant="contained" type="submit">SUBMIT</Button>
+            <Button variant="contained" type="submit">
+              SUBMIT
+            </Button>
           </div>
         </form>
       </div>
 
-      <GroupBy data={showData} oldData={oldData} setData={setShowData} />
+      <GroupBy oldData={oldData} setData={setShowData} />
 
-      <div>
+      <div className="m-2">
+        <Search oldData={oldData} setData={setShowData}/>
+      </div>
+
+      <div className="m-2">
         <ShowData data={showData} oldData={oldData} />
       </div>
     </>

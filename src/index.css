@@ -61,3 +61,14 @@ form > div{
 .w-50{
   width: 50%;
 }
+.err,.msg{
+  display: inline-block;
+  margin: 10px 0;
+  color: red;
+}
+.msg{
+  color: green !important
+}
+.m-2{
+  margin: 2rem 0;
+}

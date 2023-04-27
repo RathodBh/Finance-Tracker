@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { styled } from "@mui/material/styles";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -31,7 +31,18 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-const MaterialTable = ({ title, sort, arr, sortMethod }) => {
+const MaterialTable = ({ title, sort, arr, sortMethod , scroll,setScroll}) => {
+ 
+  //Pagination with infinite scrolling
+
+  useEffect(()=>{
+    window.onscroll = function (ev) {
+      if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
+        setScroll(scroll + 2)
+      }
+    };
+  },[scroll])
+
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 700 }} aria-label="customized table">
@@ -68,7 +79,7 @@ const MaterialTable = ({ title, sort, arr, sortMethod }) => {
               <StyledTableCell>{d.transactionType}</StyledTableCell>
               <StyledTableCell>{d.fromAccount}</StyledTableCell>
               <StyledTableCell>{d.toAccount}</StyledTableCell>
-              <StyledTableCell>&#8377; {d.amount}</StyledTableCell>
+              <StyledTableCell>&#8377; {parseInt(d.amount).toLocaleString('en-IN')}</StyledTableCell>
               <StyledTableCell>
                 <img
                   src={d.receipt}
@@ -91,7 +102,8 @@ const MaterialTable = ({ title, sort, arr, sortMethod }) => {
                 </Link>
               </StyledTableCell>
             </StyledTableRow>
-          ))}
+          )).splice(0,scroll)
+          }
         </TableBody>
       </Table>
     </TableContainer>
