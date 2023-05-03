@@ -2,11 +2,10 @@ import React, { useEffect, useState } from "react";
 
 import MaterialTable from "./common/MaterialTable";
 
-const ShowData = ({ data, oldData }) => {
+const ShowData = ({ data, oldData, setData }) => {
   const [tempData, setTempData] = useState([{}]);
   const [sortMethod, setSortMethod] = useState(1);
-  const [scroll, setScroll] = useState(0);
-
+  
   useEffect(() => {
     if (Array.isArray(data)) {
       setTempData(data);
@@ -17,9 +16,9 @@ const ShowData = ({ data, oldData }) => {
 
   const sort = (name, title) => {
     if (sortMethod > 2) {
-      setSortMethod((prev) => 1);
+      setSortMethod(1);
     } else {
-      setSortMethod((prev) => sortMethod + 1);
+      setSortMethod(sortMethod + 1);
     }
     let cloneData = null;
     if (!title) {
@@ -46,30 +45,30 @@ const ShowData = ({ data, oldData }) => {
         }
       });
     }
-    setTempData((prev) => cloneData);
+    setTempData(cloneData);
   };
   return (
     <>
-      {Array.isArray(data) && data.length > 0 && (
+      {Array.isArray(data) && (
         <MaterialTable
           sort={sort}
           arr={tempData}
           sortMethod={sortMethod}
-          scroll={scroll}
-          setScroll={setScroll}
+          setData={setData}
+          oldData={oldData}
         />
       )}
 
       {data && !Array.isArray(data) && (
         <>
-          {Object.keys(data).map((curKey) => (
+          {Object.keys(data)?.map((curKey) => (
             <MaterialTable
               title={curKey}
               sort={sort}
               arr={data[curKey]}
               sortMethod={sortMethod}
-              scroll={scroll}
-              setScroll={setScroll}
+              setData={setData}
+              oldData={oldData}
             />
           ))}
         </>

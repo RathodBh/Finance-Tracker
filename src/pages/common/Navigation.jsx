@@ -8,6 +8,8 @@ import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import Modal from "./Modal";
 import { useNavigate } from "react-router-dom";
+import Link from '@mui/material/Link';
+
 // import Box from "@mui/material/Box";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import List from "@mui/material/List";
@@ -19,6 +21,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import LogoutIcon from "@mui/icons-material/Logout";
 import AlternateEmailIcon from "@mui/icons-material/AlternateEmail";
+import ShowIcon from "@mui/icons-material/TextSnippet";
 
 export default function Navigation() {
   const [open, setOpen] = useState(false);
@@ -69,16 +72,18 @@ export default function Navigation() {
       </List>
       <Divider />
       <List>
-        {["Add"].map((text, index) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton>
-              <ListItemIcon>
-                {index === 0 && <AddIcon />}
-                {/* {index % 2 === 0 ? <InboxIcon /> : <MailIcon />} */}
-              </ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItemButton>
-          </ListItem>
+        {[
+          { text: "Add", link: "/finance-form", icon: <AddIcon /> },
+          { text: "Show Data", link: "/transactions", icon: <ShowIcon /> },
+        ].map((obj, index) => (
+          <Link href={obj.link} underline="none">
+            <ListItem key={obj.text} disablePadding>
+              <ListItemButton>
+                <ListItemIcon>{obj.icon}</ListItemIcon>
+                <ListItemText primary={obj.text} />
+              </ListItemButton>
+            </ListItem>
+          </Link>
         ))}
       </List>
       {/* <Divider /> */}
@@ -86,8 +91,8 @@ export default function Navigation() {
         {["Logout"].map((text, index) => (
           <ListItem key={text} disablePadding>
             <ListItemButton onClick={toggleModal}>
-              <ListItemIcon >
-                <LogoutIcon  />
+              <ListItemIcon>
+                <LogoutIcon />
               </ListItemIcon>
               <ListItemText primary={text} />
             </ListItemButton>
@@ -134,9 +139,6 @@ export default function Navigation() {
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
               Finance Tracker
             </Typography>
-            {/* <Button color="inherit" onClick={toggleModal}>
-              Logout
-            </Button> */}
           </Toolbar>
         </AppBar>
       </Box>
@@ -148,6 +150,7 @@ export default function Navigation() {
           title="Logout"
           message="Are you sure want to logout?"
           onClick={handleLogout}
+          Btntext="Yes, Logout"
         />
       )}
 

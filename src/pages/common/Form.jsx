@@ -5,7 +5,8 @@ import { getData } from "../Add";
 //MUI
 import { Button } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/DeleteOutline";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import Modal from "./Modal";
 
 export const columns = [
   {
@@ -82,35 +83,30 @@ const setData = (data) => {
   else localStorage.setItem(NAME, JSON.stringify([data]));
 };
 
-const Form = ({ setShowData, setOldData }) => {
+const Form = () => {
   const [err, setErr] = useState({});
   const [val, setVal] = useState(initialValues);
+  const [open, setOpen] = useState(false);
 
   const fileRef = useRef();
   const { checkVal } = useTable({ setErr });
-  const { id } = useParams();
+  const location = useLocation();
+
+  const id = location?.state?.id || null;
   const navigate = useNavigate();
 
+  useEffect(() => {
+    if (id) checkMode();
+  }, [id]);
   const checkMode = () => {
     if (id) {
       const allData = getData();
-      const thisData = allData.find(
+      const thisData = allData?.find(
         (user) => parseInt(user.id) === parseInt(id)
       );
       setVal(thisData);
     }
   };
-
-  useEffect(() => {
-    if (getData() !== false) {
-      setShowData(getData());
-      setOldData(getData());
-    }
-  }, []);
-
-  useEffect(() => {
-    if (id) checkMode();
-  }, [id]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -184,16 +180,13 @@ const Form = ({ setShowData, setOldData }) => {
           return data;
         });
         localStorage.setItem(NAME, JSON.stringify([...updatedData]));
-
-        setVal(initialValues);
-        navigate("/finance-form");
+        toggleModal();
+        // setVal(initialValues);
+        // navigate("/finance-form");
       } else {
+        toggleModal();
         setData(newData);
-      }
-
-      if (getData() !== false) {
-        setShowData(getData());
-        setOldData(getData());
+        setVal(initialValues);
       }
     }
   };
@@ -246,8 +239,23 @@ const Form = ({ setShowData, setOldData }) => {
     fileRef.current.value = null;
     setVal({ ...val, receipt: "" });
   };
+  const toggleModal = () => setOpen(!open);
+
+  console.log("ID",id)
   return (
     <>
+      {open && (
+        <Modal
+          open={open}
+          toggleModal={toggleModal}
+          title="Success!"
+          message= {
+            id ? "Data updated successfully" : "New Data Inserted Successfully"
+          }
+          Btntext="Show Data"
+          onClick={() => navigate("/transactions")}
+        />
+      )}
       <div className="allCenter m-2">
         <h1>{id ? "Edit data" : "Add data"}</h1>
         <form onSubmit={handleSubmit}>

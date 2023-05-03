@@ -15,7 +15,7 @@ const CheckLoginAuth = () => {
     auth = false;
   }
   console.log("auth", auth);
-  return auth ? <Outlet /> : <Navigate to="/" />;
+  return auth ? <Outlet /> : <Navigate to="/finance-form" />;
 };
 
 export { CheckLoginAuth };

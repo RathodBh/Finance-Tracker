@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 
 const Search = ({ oldData, setData }) => {
-
-const [dataFound, setDataFound] = useState('');
+  const [dataFound, setDataFound] = useState("");
+  
   const search = (e) => {
     const searchValue = e.target.value;
     const cloneData = [...oldData];
@@ -23,14 +23,14 @@ const [dataFound, setDataFound] = useState('');
 
     setData(searchRes);
 
-    if(searchValue){
-        if(searchRes.length === 0){
-            setDataFound(`No Data found`)
-        }else{
-            setDataFound(`${searchRes.length} Data found`)
-        }
-    }else{
-        setDataFound(``)
+    if (searchValue) {
+      if (searchRes.length === 0) {
+        setDataFound(`No Data found`);
+      } else {
+        setDataFound(`${searchRes.length} Data found`);
+      }
+    } else {
+      setDataFound(``);
     }
   };
   return (
@@ -38,13 +38,15 @@ const [dataFound, setDataFound] = useState('');
       <form className="allCenter">
         <input
           type="search"
-          className="w-50"
+          className="w-100"
           placeholder="Search"
           onChange={search}
         />
       </form>
       <div className="allCenter">
-        <span className="msg">{dataFound}</span>
+        <span className="" style={{ color: "white !important" }}>
+          {dataFound}
+        </span>
       </div>
     </>
   );

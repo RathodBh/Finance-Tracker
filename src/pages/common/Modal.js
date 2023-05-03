@@ -6,7 +6,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 
-function Modal({ open, toggleModal, title = "", message, onClick }) {
+function Modal({ open, toggleModal, title = "", message, onClick=toggleModal, Btntext }) {
   return (
     <div>
       <Dialog
@@ -23,9 +23,18 @@ function Modal({ open, toggleModal, title = "", message, onClick }) {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button variant="contained" sx={{backgroundColor:"gray","&:hover":{background:"silver"}}}  onClick={toggleModal}>No</Button>
+          <Button
+            variant="contained"
+            sx={{
+              backgroundColor: "gray",
+              "&:hover": { background: "silver" },
+            }}
+            onClick={toggleModal}
+          >
+            No
+          </Button>
           <Button variant="contained" autoFocus onClick={onClick}>
-            Yes, Logout
+            {Btntext}
           </Button>
         </DialogActions>
       </Dialog>

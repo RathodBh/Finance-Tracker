@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { styled } from "@mui/material/styles";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -12,6 +12,7 @@ import EditIcon from "@mui/icons-material/Edit";
 
 import { columns } from "./Form";
 import { Link } from "react-router-dom";
+import Search from "../Search";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -33,97 +34,109 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-const MaterialTable = ({ title, sort, arr, sortMethod, scroll, setScroll }) => {
+const MaterialTable = ({
+  title,
+  sort,
+  arr,
+  sortMethod,
+  setData,
+  oldData
+}) => {
+  const [scroll, setScroll] = useState(5);
+
   //Pagination with infinite scrolling
 
-  useEffect(() => {
-    window.onscroll = function (e) {
-      if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
-        setScroll(scroll + 2);
-      }
-    };
-  }, [scroll]);
+  // useEffect(() => {
+  //   window.onscroll = function (e) {
+  //     if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
+  //       setScroll(scroll + 2);
+  //     }
+  //   };
+  // }, [scroll]);
 
   return (
     <>
-    <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 700 }} aria-label="customized table">
-        <TableHead>
-          <TableRow>
-            <StyledTableCell colSpan={columns.length + 3}>
-              {title}
-            </StyledTableCell>
-          </TableRow>
-          <TableRow>
-            <StyledTableCell>#</StyledTableCell>
-            {columns.map((c, i) => (
-              <StyledTableCell key={i}>
-                <span>
-                  {sortMethod === 1 ? (
-                    <>&#8661; </>
-                  ) : sortMethod === 2 ? (
-                    <>&#8657; </>
-                  ) : (
-                    <>&#8659; </>
-                  )}
-                </span>
-                <span onClick={(e) => sort(c.db, title)}>{c.show}</span>
+      <TableContainer component={Paper}>
+        <Table sx={{ minWidth: 700 }} aria-label="customized table">
+          <TableHead>
+            <TableRow>
+              <StyledTableCell colSpan={7}>
+                {title? title: "All Data"}
+                </StyledTableCell>
+              <StyledTableCell colSpan={3}>
+                <Search oldData={oldData} setData={setData} />
               </StyledTableCell>
-            ))}
-            <StyledTableCell>Edit</StyledTableCell>
-            <StyledTableCell>Show</StyledTableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {arr
-            ?.map((d, i) => (
-              <StyledTableRow key={i + 1}>
-                <StyledTableCell>{i + 1}</StyledTableCell>
-                <StyledTableCell>{d.transDate}</StyledTableCell>
-                <StyledTableCell>{d.transactionType}</StyledTableCell>
-                <StyledTableCell>{d.fromAccount}</StyledTableCell>
-                <StyledTableCell>{d.toAccount}</StyledTableCell>
-                <StyledTableCell>
-                  &#8377; {parseInt(d.amount).toLocaleString("en-IN")}
+            </TableRow>
+            <TableRow>
+              <StyledTableCell>#</StyledTableCell>
+              {columns.map((c, i) => (
+                <StyledTableCell key={i}>
+                  <span>
+                    {sortMethod === 1 ? (
+                      <>&#8661; </>
+                    ) : sortMethod === 2 ? (
+                      <>&#8657; </>
+                    ) : (
+                      <>&#8659; </>
+                    )}
+                  </span>
+                  <span onClick={(e) => sort(c.db, title)}>{c.show}</span>
                 </StyledTableCell>
-                <StyledTableCell>
-                  {d?.receipt?.length > 0 && (
-                    <img
-                      src={d.receipt}
-                      alt=""
-                      style={{
-                        height: "150px",
-                        aspectRatio: "1/1",
-                        objectFit: "cover",
-                      }}
-                    />
-                  )}
-                </StyledTableCell>
-                <StyledTableCell>{d.notes}</StyledTableCell>
-                <StyledTableCell>
-                  <Link
-                    to={`/finance-form/${d.id}`}
-                    state={{ id: d.id }}
-                    className="underline-none"
-                  >
-                    <EditIcon />
-                  </Link>
-                </StyledTableCell>
-                <StyledTableCell>
-                  <Link
-                    to="/showInfo"
-                    state={{ id: d.id }}
-                    className="underline-none"
-                  >
-                    <VisibilityIcon />
-                  </Link>
-                </StyledTableCell>
-              </StyledTableRow>
-            ))
-            .splice(0, scroll)}
-        </TableBody>
-      </Table>
-    </TableContainer>
+              ))}
+              <StyledTableCell>Edit</StyledTableCell>
+              <StyledTableCell>Show</StyledTableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {arr
+              ?.map((d, i) => (
+                <StyledTableRow key={i + 1}>
+                  <StyledTableCell>{i + 1}</StyledTableCell>
+                  <StyledTableCell>{d.transDate}</StyledTableCell>
+                  <StyledTableCell>{d.transactionType}</StyledTableCell>
+                  <StyledTableCell>{d.fromAccount}</StyledTableCell>
+                  <StyledTableCell>{d.toAccount}</StyledTableCell>
+                  <StyledTableCell>
+                    &#8377; {parseInt(d.amount).toLocaleString("en-IN")}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {d?.receipt?.length > 0 && (
+                      <img
+                        src={d.receipt}
+                        alt=""
+                        style={{
+                          height: "150px",
+                          aspectRatio: "1/1",
+                          objectFit: "cover",
+                        }}
+                      />
+                    )}
+                  </StyledTableCell>
+                  <StyledTableCell>{d.notes}</StyledTableCell>
+                  <StyledTableCell>
+                    <Link
+                      to="/finance-form"
+                      state={{ id: d.id }}
+                      className="underline-none"
+                    >
+                      <EditIcon />
+                    </Link>
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    <Link
+                      to={`/transactions/${d.id}`}
+                      className="underline-none"
+                    >
+                      <VisibilityIcon />
+                    </Link>
+                  </StyledTableCell>
+                </StyledTableRow>
+              ))
+              .splice(0, scroll)}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      
     </>
   );
 };

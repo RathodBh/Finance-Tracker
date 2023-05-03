@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { getData } from "./Add";
 //mui
 import Card from "@mui/material/Card";
@@ -10,11 +10,12 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 const ShowInfo = () => {
-  const location = useLocation();
-  const infoId = location.state.id;
+  // const location = useLocation();
+  const {id} = useParams();
+  console.log("🚀 ~ file: ShowInfo.jsx:15 ~ ShowInfo ~ id:", id)
 
   const allData = getData();
-  const [cardData] = allData.filter((data) => data.id === infoId);
+  const [cardData] = allData.filter((data) => parseInt(data.id) === parseInt(id));
   console.log("🚀 ~ file: ShowInfo.jsx:18 ~ ShowInfo ~ cardData:", cardData);
 
   return (
