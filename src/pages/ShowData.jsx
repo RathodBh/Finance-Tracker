@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
 
-import MaterialTable from "./MaterialTable";
+import MaterialTable from "./common/MaterialTable";
 
 const ShowData = ({ data, oldData }) => {
   const [tempData, setTempData] = useState([{}]);
   const [sortMethod, setSortMethod] = useState(1);
-
   const [scroll, setScroll] = useState(0);
 
   useEffect(() => {

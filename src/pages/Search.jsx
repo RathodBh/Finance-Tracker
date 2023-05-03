@@ -19,10 +19,9 @@ const [dataFound, setDataFound] = useState('');
       ) {
         return curData;
       }
-      return '';
     });
 
-    setData((prev) => searchRes);
+    setData(searchRes);
 
     if(searchValue){
         if(searchRes.length === 0){
@@ -36,14 +35,14 @@ const [dataFound, setDataFound] = useState('');
   };
   return (
     <>
-      <div className="allCenter">
+      <form className="allCenter">
         <input
           type="search"
           className="w-50"
           placeholder="Search"
           onChange={search}
         />
-      </div>
+      </form>
       <div className="allCenter">
         <span className="msg">{dataFound}</span>
       </div>

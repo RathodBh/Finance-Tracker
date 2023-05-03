@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { columns } from "./Add";
+import { columns } from "./common/Form";
 
 const GroupBy = ({ oldData, setData }) => {
   const [toggleRemove, setToggleRemove] = useState("d-none");
@@ -25,8 +25,8 @@ const GroupBy = ({ oldData, setData }) => {
 
   return (
     <>
-      <div className="allCenter">
-        <select name="groupBy" onChange={setGroupBy} className="w-50" defaultValue={""}> 
+      <form className="allCenter">
+        <select name="groupBy" onChange={setGroupBy} className="w-50 p-2" defaultValue={""}> 
           <option value="" disabled>
             Select group by column
           </option>
@@ -37,10 +37,10 @@ const GroupBy = ({ oldData, setData }) => {
           ))}
         </select>
 
-        <button variant="contained" onClick={removeFilter} className={`${toggleRemove} w-50 button`} style={{margin:"8px 0px"}}>
+        <button type="button" variant="contained" onClick={removeFilter} className={`${toggleRemove} w-50 button`} style={{margin:"8px 0px"}}>
           Remove filter
         </button>
-      </div>
+      </form>
     </>
   );
 };

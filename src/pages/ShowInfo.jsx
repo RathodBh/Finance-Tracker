@@ -14,9 +14,9 @@ const ShowInfo = () => {
   const infoId = location.state.id;
 
   const allData = getData();
-  const [cardData] = allData.filter(data => data.id === infoId)
-  console.log("🚀 ~ file: ShowInfo.jsx:18 ~ ShowInfo ~ cardData:", cardData)
- 
+  const [cardData] = allData.filter((data) => data.id === infoId);
+  console.log("🚀 ~ file: ShowInfo.jsx:18 ~ ShowInfo ~ cardData:", cardData);
+
   return (
     <>
       <Link to="/">
@@ -25,26 +25,31 @@ const ShowInfo = () => {
 
       <div className="allCenter">
         <Card sx={{ maxWidth: 345 }}>
-          <CardMedia
-            sx={{ height: 240 }}
-            image={cardData.receipt}
-            title="green iguana"
-          />
+          {cardData?.receipt && (
+            <CardMedia
+              sx={{ height: 240 }}
+              image={cardData.receipt}
+              title="green iguana"
+            />
+          )}
           <CardContent>
             <Typography gutterBottom variant="body1" component="div">
               Amount: {cardData.amount}
             </Typography>
-            <br/>
+            <br />
             <Typography gutterBottom variant="h5" component="div">
-              Transaction Date: <br />{cardData.transDate} ({cardData.monthYear})
+              Transaction Date: <br />
+              {cardData.transDate} ({cardData.monthYear})
             </Typography>
-            <br/>
+            <br />
             <Typography variant="body2" color="text.secondary">
-             Type of transaction: <br /><b>{cardData.transactionType}</b> 
+              Type of transaction: <br />
+              <b>{cardData.transactionType}</b>
             </Typography>
-            <br/>
+            <br />
             <Typography variant="body2" color="text.secondary">
-             Notes: <br /><b>{cardData.notes}</b> 
+              Notes: <br />
+              <b>{cardData.notes}</b>
             </Typography>
           </CardContent>
           <CardActions>
