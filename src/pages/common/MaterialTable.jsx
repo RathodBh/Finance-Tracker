@@ -77,7 +77,7 @@ const MaterialTable = ({ title, sort, arr, sortMethod }) => {
     <>
       <div style={{ margin: "20px" }}>
         <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 700 }} aria-label="customized table">
+          <Table sx={{ minWidth: 700 }} >
             <TableHead>
               <TableRow>
                 <StyledTableCell colSpan={7}>
@@ -100,7 +100,7 @@ const MaterialTable = ({ title, sort, arr, sortMethod }) => {
                         <>&#8659; </>
                       )}
                     </span>
-                    <span onClick={(e) => sort(c.db, title)}>{c.show}</span>
+                    <span onClick={() => sort(c.db, title)}>{c.show}</span>
                   </StyledTableCell>
                 ))}
                 <StyledTableCell>Edit</StyledTableCell>
@@ -153,8 +153,8 @@ const MaterialTable = ({ title, sort, arr, sortMethod }) => {
                   </StyledTableRow>
                 ))
                 .splice(
-                  (pagination.page - 1) * pagination.limit,
-                  pagination.limit
+                  (pagination?.page - 1) * pagination?.limit,
+                  pagination?.limit
                 )}
             </TableBody>
           </Table>
@@ -169,7 +169,7 @@ const MaterialTable = ({ title, sort, arr, sortMethod }) => {
               <select
                 name=""
                 id="limit"
-                value={pagination.limit}
+                value={pagination?.limit}
                 className="mx-1 px-2 py-1"
                 onChange={setNewLimit}
               >
@@ -180,8 +180,8 @@ const MaterialTable = ({ title, sort, arr, sortMethod }) => {
               </select>
             </div>
             <Pagination
-              count={Math.ceil(myArr.length / pagination.limit)}
-              page={pagination.page}
+              count={Math.ceil(myArr?.length / pagination?.limit)}
+              page={pagination?.page}
               onChange={handlePagination}
             />
           </div>
