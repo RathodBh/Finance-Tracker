@@ -1,69 +1,16 @@
 import React, { useEffect, useRef, useState } from "react";
-import useTable from "./useTable";
-import { NAME } from "../Add";
-import { getData } from "../Add";
+import useTable from "./useValidation";
+import { NAME } from "../../utils/Constants";
+import { getData } from "../../services/LocalStorageService";
 //MUI
 import { Button } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/DeleteOutline";
 import { useNavigate, useLocation } from "react-router-dom";
 import Modal from "./Modal";
-
-export const columns = [
-  {
-    show: "Transaction date",
-    db: "transDate",
-  },
-  {
-    show: "Transaction type",
-    db: "transactionType",
-  },
-  {
-    show: "Transfer from",
-    db: "fromAccount",
-  },
-
-  {
-    show: "Transfer to",
-    db: "toAccount",
-  },
-
-  {
-    show: "amount",
-    db: "amount",
-  },
-  {
-    show: "Receipt",
-    db: "receipt",
-  },
-  {
-    show: "Notes",
-    db: "notes",
-  },
-];
-
-export const monthsNames = [
-  "Jan 2023",
-  "Feb 2023",
-  "Mar 2023",
-  "Apr 2023",
-  "May 2023",
-  "Jun 2023",
-  "Jul 2023",
-  "Aug 2023",
-  "Sep 2023",
-  "Oct 2023",
-  "Nov 2023",
-  "Dec 2023",
-];
-export const transactionTypes = ["Home Expense", "Personal Expense", "Income"];
-export const accountData = [
-  "Personal Account",
-  "Real Living",
-  "My Dream Home",
-  "Full Circle",
-  "Core Realtors",
-  "Big Block",
-];
+// import { columns } from "../../utils/Constants";
+import { monthsNames } from "../../utils/Constants";
+import { transactionTypes } from "../../utils/Constants";
+import { accountData } from "../../utils/Constants";
 
 const initialValues = {
   transDate: "",
@@ -97,6 +44,8 @@ const Form = () => {
 
   useEffect(() => {
     if (id) checkMode();
+
+    // eslint-disable-next-line
   }, [id]);
   const checkMode = () => {
     if (id) {
@@ -181,8 +130,6 @@ const Form = () => {
         });
         localStorage.setItem(NAME, JSON.stringify([...updatedData]));
         toggleModal();
-        // setVal(initialValues);
-        // navigate("/finance-form");
       } else {
         toggleModal();
         setData(newData);
@@ -241,7 +188,6 @@ const Form = () => {
   };
   const toggleModal = () => setOpen(!open);
 
-  console.log("ID",id)
   return (
     <>
       {open && (
@@ -249,7 +195,7 @@ const Form = () => {
           open={open}
           toggleModal={toggleModal}
           title="Success!"
-          message= {
+          message={
             id ? "Data updated successfully" : "New Data Inserted Successfully"
           }
           Btntext="Show Data"
@@ -379,6 +325,7 @@ const Form = () => {
                     width: "150px",
                     objectFit: "cover",
                   }}
+                  alt={"a"}
                 />
                 <span
                   className="allCenter"

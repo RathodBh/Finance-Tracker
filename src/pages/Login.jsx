@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Button, TextField } from "@mui/material";
-import { Link, Navigate, useNavigate } from "react-router-dom";
-import useTable from "./common/useTable";
+import { Link, useNavigate } from "react-router-dom";
+import useTable from "./common/useValidation";
 
 const initialValues = {
   email: "",
@@ -32,12 +32,12 @@ const Login = () => {
     if (Err1 && Err2) {
       const allData = JSON.parse(localStorage.getItem("FinanceUsers"));
 
-      const res = allData.filter(
+      const res = allData?.filter(
         (user) => user.email === val?.email && user.password === val?.password
       );
-      
-      const userEmail = res[0].email;
-      if (res.length > 0) {
+
+      const userEmail = res && res[0]?.email;
+      if (res?.length > 0) {
         const abc = "abcdefghijklmnopqrstuvwxyz1234567890";
         let auth = "";
         for (let i = 0; i < 16; i++) {
@@ -50,7 +50,7 @@ const Login = () => {
         setVal(initialValues);
         checkVal(1, "password", "Invalid username or password");
       }
-      
+
     }
   };
 

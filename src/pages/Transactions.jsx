@@ -2,17 +2,17 @@ import React, { useEffect, useState } from "react";
 
 import MaterialTable from "./common/MaterialTable";
 
-const ShowData = ({ data, oldData, setData }) => {
+const ShowData = ({ data, oldData }) => {
   const [tempData, setTempData] = useState([{}]);
   const [sortMethod, setSortMethod] = useState(1);
-  
+
   useEffect(() => {
     if (Array.isArray(data)) {
       setTempData(data);
     } else if (!Array.isArray(data)) {
       setTempData(oldData);
     }
-  }, [data]);
+  }, [data, oldData]);
 
   const sort = (name, title) => {
     if (sortMethod > 2) {
@@ -50,25 +50,18 @@ const ShowData = ({ data, oldData, setData }) => {
   return (
     <>
       {Array.isArray(data) && (
-        <MaterialTable
-          sort={sort}
-          arr={tempData}
-          sortMethod={sortMethod}
-          setData={setData}
-          oldData={oldData}
-        />
+        <MaterialTable sort={sort} arr={tempData} sortMethod={sortMethod} />
       )}
 
       {data && !Array.isArray(data) && (
         <>
-          {Object.keys(data)?.map((curKey) => (
+          {Object.keys(data)?.map((curKey,index) => (
             <MaterialTable
+              key={index}
               title={curKey}
               sort={sort}
               arr={data[curKey]}
               sortMethod={sortMethod}
-              setData={setData}
-              oldData={oldData}
             />
           ))}
         </>

@@ -5,7 +5,6 @@ const PrivateRoutes = () => {
   if (localStorage.getItem("FinanceToken")) {
     auth = true;
   }
-  console.log("auth", auth);
   return auth ? <Outlet /> : <Navigate to="/login" />;
 };
 
@@ -14,7 +13,6 @@ const CheckLoginAuth = () => {
   if (localStorage.getItem("FinanceToken")) {
     auth = false;
   }
-  console.log("auth", auth);
   return auth ? <Outlet /> : <Navigate to="/finance-form" />;
 };
 

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Button, TextField } from "@mui/material";
 import { Link } from "react-router-dom";
-import useTable from "./common/useTable";
+import useTable from "./common/useValidation";
 
 const initialValues = {
   email: "",
@@ -17,7 +17,6 @@ const SignUp = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Submit");
     const email = val?.email;
     const password = val?.password;
     const cpassword = val?.cpassword;

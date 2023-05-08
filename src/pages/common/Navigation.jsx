@@ -63,7 +63,6 @@ export default function Navigation() {
             <ListItemButton>
               <ListItemIcon>
                 {index === 0 && <AlternateEmailIcon />}
-                {/* {index % 2 === 0 ? <InboxIcon /> : <MailIcon />} */}
               </ListItemIcon>
               <ListItemText primary={text} />
             </ListItemButton>
@@ -76,7 +75,7 @@ export default function Navigation() {
           { text: "Add", link: "/finance-form", icon: <AddIcon /> },
           { text: "Show Data", link: "/transactions", icon: <ShowIcon /> },
         ].map((obj, index) => (
-          <Link href={obj.link} underline="none">
+          <Link href={obj.link} underline="none" key={obj.link}>
             <ListItem key={obj.text} disablePadding>
               <ListItemButton>
                 <ListItemIcon>{obj.icon}</ListItemIcon>

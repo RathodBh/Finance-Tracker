@@ -3,15 +3,7 @@ import Form from "./common/Form";
 
 //MUI
 import Navigation from "./common/Navigation";
-export const NAME = "finance_tracker";
-
-export const getData = () => {
-  if (localStorage.getItem(NAME)) {
-    return JSON.parse(localStorage.getItem(NAME));
-  } else {
-    return false;
-  }
-};
+// import {getData} from "../services/LocalStorageService"
 
 const Add = () => {
   return (

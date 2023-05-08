@@ -1,30 +1,27 @@
 import React, { useState } from "react";
 
-const Search = ({ oldData, setData }) => {
+const Search = ({ setMy, oldData }) => {
   const [dataFound, setDataFound] = useState("");
-  
+
   const search = (e) => {
     const searchValue = e.target.value;
     const cloneData = [...oldData];
 
-    const searchRes = cloneData.filter((curData) => {
-      if (
-        curData.transDate.includes(searchValue) ||
-        curData.notes.includes(searchValue) ||
-        curData.toAccount.includes(searchValue) ||
-        curData.fromAccount.includes(searchValue) ||
-        curData.transactionType.includes(searchValue) ||
-        curData.amount.includes(searchValue) ||
-        curData.monthYear.includes(searchValue)
-      ) {
-        return curData;
-      }
-    });
+    const searchRes = cloneData?.filter(
+      (curData) =>
+        curData.transDate?.includes(searchValue) ||
+        curData.notes?.includes(searchValue) ||
+        curData.toAccount?.includes(searchValue) ||
+        curData.fromAccount?.includes(searchValue) ||
+        curData.transactionType?.includes(searchValue) ||
+        curData.amount?.includes(searchValue) ||
+        curData.monthYear?.includes(searchValue)
+    );
 
-    setData(searchRes);
+    setMy(searchRes);
 
     if (searchValue) {
-      if (searchRes.length === 0) {
+      if (searchRes?.length === 0) {
         setDataFound(`No Data found`);
       } else {
         setDataFound(`${searchRes.length} Data found`);
