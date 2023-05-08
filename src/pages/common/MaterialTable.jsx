@@ -9,11 +9,13 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 import { columns } from "../../utils/Constants";
 import { Link } from "react-router-dom";
 import Search from "../Search";
 import { Pagination } from "@mui/material";
+import { deleteData } from "../../services/LocalStorageService";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -36,14 +38,13 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 const MaterialTable = ({ title, sort, arr, sortMethod }) => {
+  const [myArr, setMyArr] = useState([{}]);
+  const [old, setOld] = useState([{}]);
   const [pagination, setPagination] = useState({
     start: 0,
     limit: 3,
     page: 1,
   });
-
-  const [myArr, setMyArr] = useState([{}]);
-  const [old, setOld] = useState([{}]);
 
   useEffect(() => {
     setOld([...arr]);
@@ -73,14 +74,15 @@ const MaterialTable = ({ title, sort, arr, sortMethod }) => {
       limit: parseInt(e.target.value),
     });
   };
+
   return (
     <>
       <div style={{ margin: "20px" }}>
         <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 700 }} >
+          <Table sx={{ minWidth: 700 }}>
             <TableHead>
               <TableRow>
-                <StyledTableCell colSpan={7}>
+                <StyledTableCell colSpan={8}>
                   {title ? title : "All Data"}
                 </StyledTableCell>
                 <StyledTableCell colSpan={3}>
@@ -104,6 +106,7 @@ const MaterialTable = ({ title, sort, arr, sortMethod }) => {
                   </StyledTableCell>
                 ))}
                 <StyledTableCell>Edit</StyledTableCell>
+                <StyledTableCell>Delete</StyledTableCell>
                 <StyledTableCell>Show</StyledTableCell>
               </TableRow>
             </TableHead>
@@ -135,12 +138,20 @@ const MaterialTable = ({ title, sort, arr, sortMethod }) => {
                     <StyledTableCell>{d.notes}</StyledTableCell>
                     <StyledTableCell>
                       <Link
-                        to="/finance-form"
-                        state={{ id: d.id }}
+                        to={`/finance-form/${d?.id}`}
                         className="underline-none"
                       >
                         <EditIcon />
                       </Link>
+                    </StyledTableCell>
+                    <StyledTableCell>
+                      <span
+                        onClick={() => {
+                          deleteData(`${d.id}`, myArr, setMyArr);
+                        }}
+                      >
+                        <DeleteIcon />
+                      </span>
                     </StyledTableCell>
                     <StyledTableCell>
                       <Link

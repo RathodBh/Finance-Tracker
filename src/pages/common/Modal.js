@@ -11,7 +11,7 @@ function Modal({ open, toggleModal, title = "", message, onClick=toggleModal, Bt
     <div>
       <Dialog
         open={open}
-        fullWidth="sm"
+        fullWidth
         onClose={toggleModal}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"

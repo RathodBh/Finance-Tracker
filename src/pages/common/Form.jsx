@@ -1,16 +1,21 @@
-import React, { useEffect, useRef, useState } from "react";
-import useTable from "./useValidation";
+import React, { useEffect, useState } from "react";
 import { NAME } from "../../utils/Constants";
-import { getData } from "../../services/LocalStorageService";
+import { getData, setData } from "../../services/LocalStorageService";
 //MUI
 import { Button } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/DeleteOutline";
-import { useNavigate, useLocation } from "react-router-dom";
-import Modal from "./Modal";
-// import { columns } from "../../utils/Constants";
-import { monthsNames } from "../../utils/Constants";
-import { transactionTypes } from "../../utils/Constants";
-import { accountData } from "../../utils/Constants";
+import { useNavigate, useParams } from "react-router-dom";
+import {
+  MAX_FILE_SIZE,
+  monthsNames,
+  transactionTypes,
+  accountData,
+} from "../../utils/Constants";
+
+import { useForm } from "react-hook-form";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { toast } from "react-toastify";
 
 const initialValues = {
   transDate: "",
@@ -23,23 +28,55 @@ const initialValues = {
   receipt: "",
 };
 
-const setData = (data) => {
-  const oldData = getData();
-  if (oldData !== false)
-    localStorage.setItem(NAME, JSON.stringify([data, ...oldData]));
-  else localStorage.setItem(NAME, JSON.stringify([data]));
-};
+const formSchema = yup.object().shape(
+  {
+    transDate: yup.string().required("Please select transaction date"),
+    monthYear: yup.string().required("Please select month year"),
+    transactionType: yup.string().required("Please select transaction type"),
+    fromAccount: yup.string().required("Please select from Account"),
+    toAccount: yup
+      .string()
+      .notOneOf([yup.ref("fromAccount")])
+      .required("Please select to Account"),
+    amount: yup
+      .number()
+      .min(1)
+      .positive()
+      .integer()
+      .required("Please select amount"),
+    receipt: yup
+      .mixed()
+      .nullable()
+      .notRequired()
+      .when("receipt", {
+        is: (value) => value?.length,
+        then: (rule) =>
+          rule.test(
+            "valid-size",
+            "Max allowed size is 1MB",
+            (value) => value && value.size <= MAX_FILE_SIZE
+          ),
+      }),
+    notes: yup.string().required("Please select notes"),
+  },
+  [["receipt","receipt"]]
+);
 
 const Form = () => {
-  const [err, setErr] = useState({});
   const [val, setVal] = useState(initialValues);
-  const [open, setOpen] = useState(false);
 
-  const fileRef = useRef();
-  const { checkVal } = useTable({ setErr });
-  const location = useLocation();
+  const { id } = useParams();
+  const values = val;
 
-  const id = location?.state?.id || null;
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm({
+    values,
+    resolver: yupResolver(formSchema),
+  });
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -57,84 +94,50 @@ const Form = () => {
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    const transDate = val?.transDate;
-    const monthYear = val?.monthYear;
-    const transactionType = val?.transactionType;
-    const fromAccount = val?.fromAccount;
-    const toAccount = val?.toAccount;
-    const amount = val?.amount;
-    const notes = val?.notes;
+  const submitData = async (data) => {
+    const {
+      transDate,
+      monthYear,
+      transactionType,
+      fromAccount,
+      toAccount,
+      amount,
+      notes,
+    } = data;
 
     const receipt = val?.receipt;
 
-    //validation error
-    const Err1 = checkVal(
-      transDate.length === 0,
-      "transDateErr",
-      "Please select a transaction date"
-    );
+    const uniqueId = new Date().getTime();
+    const newData = {
+      id: !!id ? parseInt(id) : uniqueId,
+      transDate,
+      monthYear,
+      transactionType,
+      fromAccount,
+      toAccount,
+      amount,
+      notes,
+      receipt,
+    };
+    if (!!id) {
+      const allData = getData();
+      const updatedData = allData.map((data) => {
+        if (parseInt(data.id) === parseInt(id)) {
+          return { ...newData };
+        }
+        return data;
+      });
+      localStorage.setItem(NAME, JSON.stringify([...updatedData]));
+      toast.success("Data updated successfully");
+      // toggleModal();
+    } else {
+      // toggleModal();
+      toast.success("Data added successfully");
 
-    const Err2 = checkVal(
-      monthYear.length === 0,
-      "monthYearErr",
-      "Please select a month Year"
-    );
-    const Err3 = checkVal(
-      transactionType.length === 0,
-      "transactionTypeErr",
-      "Please select a transaction type"
-    );
-    const Err4 = checkVal(
-      fromAccount.length === 0,
-      "fromAccountErr",
-      "Please select a transaction from account"
-    );
+      setData(newData);
+      setVal(initialValues);
 
-    const Err5 = checkVal(
-      toAccount.length === 0,
-      "toAccountErr",
-      "Please select a transaction to account",
-      fromAccount === toAccount,
-      "Please select different accounts to transaction"
-    );
-    const Err6 = checkVal(
-      amount.length === 0,
-      "amountErr",
-      "Please enter amount"
-    );
-    const Err7 = checkVal(notes.length === 0, "notesErr", "Please enter note");
-
-    if (Err1 && Err2 && Err3 && Err4 && Err5 && Err6 && Err7) {
-      const uniqueId = new Date().getTime();
-      const newData = {
-        id: !!id ? parseInt(id) : uniqueId,
-        transDate,
-        monthYear,
-        transactionType,
-        fromAccount,
-        toAccount,
-        amount,
-        notes,
-        receipt,
-      };
-      if (!!id) {
-        const allData = getData();
-        const updatedData = allData.map((data) => {
-          if (parseInt(data.id) === parseInt(id)) {
-            return { ...newData };
-          }
-          return data;
-        });
-        localStorage.setItem(NAME, JSON.stringify([...updatedData]));
-        toggleModal();
-      } else {
-        toggleModal();
-        setData(newData);
-        setVal(initialValues);
-      }
+      navigate("/transactions");
     }
   };
 
@@ -147,82 +150,41 @@ const Form = () => {
       reader.onerror = reject;
     });
 
-  const handleChange = (e) => {
+  const previewImg = async (e) => {
+    const img = e.target.files[0];
     const keyName = e.target.name;
-    const keyValue = e.target.value;
+
+    const keyValue = await toBase64(img);
     setVal({
       ...val,
       [keyName]: keyValue,
     });
   };
-  const previewImg = async (e) => {
-    const img = e.target.files[0];
-    const keyName = e.target.name;
-    if (
-      !(
-        img.type.includes("png") ||
-        img.type.includes("jpg") ||
-        img.type.includes("jpeg")
-      )
-    ) {
-      setErr((err) => ({
-        ...err,
-        receipt: "Type invalid, Only png,jpg and jpeg allowed",
-      }));
-    } else {
-      const keyValue = await toBase64(img);
-      setVal({
-        ...val,
-        [keyName]: keyValue,
-      });
-      setErr((err) => ({
-        ...err,
-        receipt: "",
-      }));
-    }
-  };
 
   const removeImg = () => {
-    fileRef.current.value = null;
+    //using useForm we can remove the value of receipt input
+    setValue("receipt", "");
+
+    //set state
     setVal({ ...val, receipt: "" });
   };
-  const toggleModal = () => setOpen(!open);
 
   return (
     <>
-      {open && (
-        <Modal
-          open={open}
-          toggleModal={toggleModal}
-          title="Success!"
-          message={
-            id ? "Data updated successfully" : "New Data Inserted Successfully"
-          }
-          Btntext="Show Data"
-          onClick={() => navigate("/transactions")}
-        />
-      )}
       <div className="allCenter m-2">
         <h1>{id ? "Edit data" : "Add data"}</h1>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit(submitData)}>
           <div>
             <label htmlFor="">Transaction date</label>
-            <input
-              type="date"
-              name="transDate"
-              onChange={handleChange}
-              value={val?.transDate}
-            />
-            <span className="err">{err?.transDateErr}</span>
+            <input type="date" {...register("transDate")} />
+            {errors?.transDate && (
+              <span className="err">{errors?.transDate?.message}</span>
+            )}
           </div>
 
           <div>
             <label htmlFor="">Month Year</label>
-            <select
-              name="monthYear"
-              onChange={handleChange}
-              value={val?.monthYear}
-            >
+            <select defaultValue={""} {...register("monthYear")}>
               <option hidden disabled value="">
                 Select Month year
               </option>
@@ -233,16 +195,14 @@ const Form = () => {
                   </option>
                 ))}
             </select>
-            <span className="err">{err?.monthYearErr}</span>
+            {errors?.monthYear && (
+              <span className="err">{errors?.monthYear?.message}</span>
+            )}
           </div>
 
           <div>
             <label htmlFor="">Transaction Type</label>
-            <select
-              name="transactionType"
-              onChange={handleChange}
-              value={val?.transactionType}
-            >
+            <select defaultValue={""} {...register("transactionType")}>
               <option disabled value="">
                 Select Transaction type
               </option>
@@ -253,16 +213,14 @@ const Form = () => {
                   </option>
                 ))}
             </select>
-            <span className="err">{err?.transactionTypeErr}</span>
+            {errors?.transactionType && (
+              <span className="err">{errors?.transactionType?.message}</span>
+            )}
           </div>
 
           <div>
             <label htmlFor="">Transaction: From Account</label>
-            <select
-              name="fromAccount"
-              onChange={handleChange}
-              value={val?.fromAccount}
-            >
+            <select defaultValue={""} {...register("fromAccount")}>
               <option disabled value="">
                 From Account
               </option>
@@ -272,16 +230,14 @@ const Form = () => {
                 </option>
               ))}
             </select>
-            <span className="err">{err?.fromAccountErr}</span>
+            {errors?.fromAccount && (
+              <span className="err">{errors?.fromAccount?.message}</span>
+            )}
           </div>
 
           <div>
             <label htmlFor="">Transaction: To Account</label>
-            <select
-              name="toAccount"
-              onChange={handleChange}
-              value={val?.toAccount}
-            >
+            <select defaultValue={""} {...register("toAccount")}>
               <option disabled value="">
                 To Account
               </option>
@@ -291,31 +247,28 @@ const Form = () => {
                 </option>
               ))}
             </select>
-            <span className="err">{err?.toAccountErr}</span>
+            {errors?.toAccount && (
+              <span className="err">{errors?.toAccount?.message}</span>
+            )}
           </div>
 
           <div>
             <label htmlFor="">Amount:</label>
-            <input
-              type="number"
-              name="amount"
-              onChange={handleChange}
-              value={val?.amount}
-            />
-            <span className="err">{err?.amountErr}</span>
+            <input type="number" {...register("amount")} />
+            {errors?.amount && (
+              <span className="err">{errors?.amount?.message}</span>
+            )}
           </div>
 
           <div>
             <label htmlFor="">Receipt:</label>
             <input
               type="file"
-              name="receipt"
-              ref={fileRef}
-              onChange={previewImg}
+              accept="image/png, image/gif, image/jpeg, image/jpg"
+              {...register("receipt", { onChange: previewImg })}
               style={{ border: "1px solid gray" }}
               className="m-2"
             />
-            <span className="err">{err?.receipt}</span>
             {val?.receipt && (
               <>
                 <img
@@ -344,12 +297,17 @@ const Form = () => {
                 </span>
               </>
             )}
+            {errors?.receipt && (
+              <span className="err">{errors?.receipt?.message}</span>
+            )}
           </div>
 
           <div>
             <label htmlFor="">Notes:</label>
-            <textarea name="notes" onChange={handleChange} value={val?.notes} />
-            <span className="err">{err.notesErr}</span>
+            <textarea {...register("notes")} />
+            {errors?.notes && (
+              <span className="err">{errors?.notes?.message}</span>
+            )}
           </div>
 
           <div>

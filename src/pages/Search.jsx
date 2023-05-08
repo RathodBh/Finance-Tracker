@@ -9,13 +9,13 @@ const Search = ({ setMy, oldData }) => {
 
     const searchRes = cloneData?.filter(
       (curData) =>
-        curData.transDate?.includes(searchValue) ||
-        curData.notes?.includes(searchValue) ||
-        curData.toAccount?.includes(searchValue) ||
-        curData.fromAccount?.includes(searchValue) ||
-        curData.transactionType?.includes(searchValue) ||
-        curData.amount?.includes(searchValue) ||
-        curData.monthYear?.includes(searchValue)
+        curData?.transDate?.includes(searchValue) ||
+        curData?.notes?.includes(searchValue) ||
+        curData?.toAccount?.includes(searchValue) ||
+        curData?.fromAccount?.includes(searchValue) ||
+        curData?.transactionType?.includes(searchValue) ||
+        curData?.amount?.toString()?.includes(searchValue) ||
+        curData?.monthYear?.includes(searchValue)
     );
 
     setMy(searchRes);

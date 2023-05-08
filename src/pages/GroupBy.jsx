@@ -31,7 +31,7 @@ const GroupBy = ({ oldData, setData }) => {
           <option value="" disabled>
             Select group by column
           </option>
-          {columns?.map((c, i) => (
+          {columns?.filter((cur)=>cur.db!=="receipt").map((c, i) => (
             <option value={c.db} key={i}>
               {c.show}
             </option>
