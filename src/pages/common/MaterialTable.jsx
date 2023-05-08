@@ -160,7 +160,7 @@ const MaterialTable = ({ title, sort, arr, sortMethod }) => {
           </Table>
         </TableContainer>
 
-        {arr?.length > 0 && (
+        {myArr && myArr?.length > 0 && (
           <div className="allCenter jscb flex-row w-100 my-1">
             <div className="d-flex">
               <label htmlFor="limit" style={{ margin: "auto 0" }}>
@@ -180,7 +180,7 @@ const MaterialTable = ({ title, sort, arr, sortMethod }) => {
               </select>
             </div>
             <Pagination
-              count={Math.ceil(arr.length / pagination.limit)}
+              count={Math.ceil(myArr.length / pagination.limit)}
               page={pagination.page}
               onChange={handlePagination}
             />
