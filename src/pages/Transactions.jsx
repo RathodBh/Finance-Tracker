@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from "react";
 
 import MaterialTable from "./common/MaterialTable";
+import useFinanceContext from "../context/FinanceContext";
 
-const ShowData = ({ data, oldData }) => {
+const ShowData = () => {
+  const { trans: data, oldData } = useFinanceContext();
+  console.log("🚀 ~ file: Transactions.jsx:8 ~ ShowData ~ data:", data)
+
   const [tempData, setTempData] = useState([{}]);
   const [sortMethod, setSortMethod] = useState(1);
 
@@ -55,7 +59,7 @@ const ShowData = ({ data, oldData }) => {
 
       {data && !Array.isArray(data) && (
         <>
-          {Object.keys(data)?.map((curKey,index) => (
+          {Object.keys(data)?.map((curKey, index) => (
             <MaterialTable
               key={index}
               title={curKey}

@@ -7,8 +7,8 @@ import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import Modal from "./Modal";
-import { useNavigate } from "react-router-dom";
-import Link from '@mui/material/Link';
+import { useNavigate,Link } from "react-router-dom";
+// import Link from '@mui/material/Link';
 
 // import Box from "@mui/material/Box";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
@@ -75,7 +75,7 @@ export default function Navigation() {
           { text: "Add", link: "/finance-form", icon: <AddIcon /> },
           { text: "Show Data", link: "/transactions", icon: <ShowIcon /> },
         ].map((obj, index) => (
-          <Link href={obj.link} underline="none" key={obj.link}>
+          <Link to={obj.link} key={index}>
             <ListItem key={obj.text} disablePadding>
               <ListItemButton>
                 <ListItemIcon>{obj.icon}</ListItemIcon>

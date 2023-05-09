@@ -15,7 +15,8 @@ import { columns } from "../../utils/Constants";
 import { Link } from "react-router-dom";
 import Search from "../Search";
 import { Pagination } from "@mui/material";
-import { deleteData } from "../../services/LocalStorageService";
+import useFinanceContext from "../../context/FinanceContext";
+// import { deleteData } from "../../services/LocalStorageService";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -38,6 +39,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 const MaterialTable = ({ title, sort, arr, sortMethod }) => {
+  
   const [myArr, setMyArr] = useState([{}]);
   const [old, setOld] = useState([{}]);
   const [pagination, setPagination] = useState({
@@ -45,6 +47,7 @@ const MaterialTable = ({ title, sort, arr, sortMethod }) => {
     limit: 3,
     page: 1,
   });
+  const { trans, setTrans, oldData, setOldData } = useFinanceContext();
 
   useEffect(() => {
     setOld([...arr]);
@@ -75,6 +78,27 @@ const MaterialTable = ({ title, sort, arr, sortMethod }) => {
     });
   };
 
+  const deleteData = (id, title) => {
+    const newData = arr?.findIndex((data) => data?.id === parseInt(id));
+    // const newDataForTrans = trans?.filter(data => data.id !== parseInt(id));
+    if (Array.isArray(trans)) {
+      let transClone = [...trans];
+      transClone.splice(newData, 1);
+      setMyArr(transClone);
+      setTrans(transClone);
+    } else {
+      const cloneObj = trans;
+      const curIndex = cloneObj[title].findIndex((cur) => cur.id === id);
+      cloneObj[title].splice(curIndex, 1);
+      setTrans(cloneObj);
+      setMyArr(cloneObj[title]);
+
+    }
+    //set old data
+    const setNewOldData = oldData.filter((cur) => cur.id !== parseInt(id));
+    setOldData(setNewOldData);
+  };
+
   return (
     <>
       <div style={{ margin: "20px" }}>
@@ -82,7 +106,7 @@ const MaterialTable = ({ title, sort, arr, sortMethod }) => {
           <Table sx={{ minWidth: 700 }}>
             <TableHead>
               <TableRow>
-                <StyledTableCell colSpan={8}>
+                <StyledTableCell colSpan={7}>
                   {title ? title : "All Data"}
                 </StyledTableCell>
                 <StyledTableCell colSpan={3}>
@@ -105,9 +129,7 @@ const MaterialTable = ({ title, sort, arr, sortMethod }) => {
                     <span onClick={() => sort(c.db, title)}>{c.show}</span>
                   </StyledTableCell>
                 ))}
-                <StyledTableCell>Edit</StyledTableCell>
-                <StyledTableCell>Delete</StyledTableCell>
-                <StyledTableCell>Show</StyledTableCell>
+                <StyledTableCell>Actions</StyledTableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -116,6 +138,7 @@ const MaterialTable = ({ title, sort, arr, sortMethod }) => {
                   <StyledTableRow key={i + 1}>
                     <StyledTableCell>{i + 1}</StyledTableCell>
                     <StyledTableCell>{d.transDate}</StyledTableCell>
+                    <StyledTableCell>{d.monthYear}</StyledTableCell>
                     <StyledTableCell>{d.transactionType}</StyledTableCell>
                     <StyledTableCell>{d.fromAccount}</StyledTableCell>
                     <StyledTableCell>{d.toAccount}</StyledTableCell>
@@ -143,17 +166,15 @@ const MaterialTable = ({ title, sort, arr, sortMethod }) => {
                       >
                         <EditIcon />
                       </Link>
-                    </StyledTableCell>
-                    <StyledTableCell>
+                      &nbsp;&nbsp;
                       <span
                         onClick={() => {
-                          deleteData(`${d.id}`, myArr, setMyArr);
+                          deleteData(`${d.id}`, title);
                         }}
                       >
                         <DeleteIcon />
                       </span>
-                    </StyledTableCell>
-                    <StyledTableCell>
+                      &nbsp;&nbsp;
                       <Link
                         to={`/transactions/${d.id}`}
                         className="underline-none"

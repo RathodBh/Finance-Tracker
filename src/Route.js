@@ -16,7 +16,7 @@ const RoutesFile = () => {
             path="/"
             element={<Navigate to="/finance-form" replace={true} />}
           />
-          <Route path="/finance-form" element={<Add />} />
+          <Route exact path="/finance-form" element={<Add />} />
           <Route path="/finance-form/:id" element={<Add />} />
           <Route exact path="/transactions" element={<Show />} />
           <Route path="/transactions/:id" element={<ShowInfo />} />

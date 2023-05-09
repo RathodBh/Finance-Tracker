@@ -6,6 +6,10 @@ export const columns = [
     db: "transDate",
   },
   {
+    show: "Month Year",
+    db: "monthYear",
+  },
+  {
     show: "Transaction type",
     db: "transactionType",
   },

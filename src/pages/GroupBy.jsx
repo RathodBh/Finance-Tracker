@@ -1,8 +1,11 @@
 import React, { useState } from "react";
 import { columns } from "../utils/Constants";
+import useFinanceContext from "../context/FinanceContext";
 
-const GroupBy = ({ oldData, setData }) => {
+const GroupBy = () => {
   const [toggleRemove, setToggleRemove] = useState("d-none");
+
+  const {oldData, setTrans: setData } = useFinanceContext();
 
   const setGroupBy = (e) => {
     setToggleRemove("");

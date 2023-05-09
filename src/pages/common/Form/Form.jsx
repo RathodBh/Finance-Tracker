@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { NAME } from "../../utils/Constants";
-import { getData, setData } from "../../services/LocalStorageService";
 //MUI
 import { Button } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/DeleteOutline";
@@ -10,12 +8,14 @@ import {
   monthsNames,
   transactionTypes,
   accountData,
-} from "../../utils/Constants";
+} from "../../../utils/Constants";
 
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { toast } from "react-toastify";
+import useFinanceContext from "../../../context/FinanceContext";
+import InputField from "./components/InputField";
 
 const initialValues = {
   transDate: "",
@@ -59,11 +59,12 @@ const formSchema = yup.object().shape(
       }),
     notes: yup.string().required("Please select notes"),
   },
-  [["receipt","receipt"]]
+  [["receipt", "receipt"]]
 );
 
 const Form = () => {
   const [val, setVal] = useState(initialValues);
+  const { setTrans, oldData } = useFinanceContext();
 
   const { id } = useParams();
   const values = val;
@@ -81,16 +82,16 @@ const Form = () => {
 
   useEffect(() => {
     if (id) checkMode();
-
     // eslint-disable-next-line
-  }, [id]);
+  }, [oldData]);
   const checkMode = () => {
     if (id) {
-      const allData = getData();
-      const thisData = allData?.find(
-        (user) => parseInt(user.id) === parseInt(id)
-      );
-      setVal(thisData);
+      const allData = [...oldData];
+      // const thisData = allData?.find(
+      //   (user) => parseInt(user.id) === parseInt(id)
+      // );
+      const thisData = allData.filter(data => data.id === parseInt(id))
+      setVal(thisData[0]);
     }
   };
 
@@ -120,21 +121,21 @@ const Form = () => {
       receipt,
     };
     if (!!id) {
-      const allData = getData();
+      const allData = [...oldData];
       const updatedData = allData.map((data) => {
         if (parseInt(data.id) === parseInt(id)) {
           return { ...newData };
         }
         return data;
       });
-      localStorage.setItem(NAME, JSON.stringify([...updatedData]));
+      setTrans([...updatedData]);
       toast.success("Data updated successfully");
       // toggleModal();
     } else {
       // toggleModal();
       toast.success("Data added successfully");
 
-      setData(newData);
+      setTrans((prevData) => [...prevData, { ...newData }]);
       setVal(initialValues);
 
       navigate("/transactions");
@@ -156,7 +157,6 @@ const Form = () => {
 
     const keyValue = await toBase64(img);
     setVal({
-      ...val,
       [keyName]: keyValue,
     });
   };
@@ -174,92 +174,50 @@ const Form = () => {
       <div className="allCenter m-2">
         <h1>{id ? "Edit data" : "Add data"}</h1>
         <form onSubmit={handleSubmit(submitData)}>
-          <div>
-            <label htmlFor="">Transaction date</label>
-            <input type="date" {...register("transDate")} />
-            {errors?.transDate && (
-              <span className="err">{errors?.transDate?.message}</span>
-            )}
-          </div>
+          <InputField
+            type="date"
+            name="transDate"
+            register={register}
+            error={errors?.transDate}
+          />
 
-          <div>
-            <label htmlFor="">Month Year</label>
-            <select defaultValue={""} {...register("monthYear")}>
-              <option hidden disabled value="">
-                Select Month year
-              </option>
-              {monthsNames?.length > 0 &&
-                monthsNames?.map((month, i) => (
-                  <option value={month} key={i}>
-                    {month}
-                  </option>
-                ))}
-            </select>
-            {errors?.monthYear && (
-              <span className="err">{errors?.monthYear?.message}</span>
-            )}
-          </div>
+          <InputField
+            field="select"
+            arr={monthsNames}
+            name="monthYear"
+            register={register}
+            error={errors?.monthYear}
+          />
+          <InputField
+            field="select"
+            arr={transactionTypes}
+            name="transactionType"
+            register={register}
+            error={errors?.transactionType}
+          />
 
-          <div>
-            <label htmlFor="">Transaction Type</label>
-            <select defaultValue={""} {...register("transactionType")}>
-              <option disabled value="">
-                Select Transaction type
-              </option>
-              {transactionTypes.length > 0 &&
-                transactionTypes?.map((t, i) => (
-                  <option value={t} key={i}>
-                    {t}
-                  </option>
-                ))}
-            </select>
-            {errors?.transactionType && (
-              <span className="err">{errors?.transactionType?.message}</span>
-            )}
-          </div>
+          <InputField
+            field="select"
+            arr={accountData}
+            name="fromAccount"
+            register={register}
+            error={errors?.fromAccount}
+          />
 
-          <div>
-            <label htmlFor="">Transaction: From Account</label>
-            <select defaultValue={""} {...register("fromAccount")}>
-              <option disabled value="">
-                From Account
-              </option>
-              {accountData.map((a, i) => (
-                <option value={a} key={i}>
-                  {a}
-                </option>
-              ))}
-            </select>
-            {errors?.fromAccount && (
-              <span className="err">{errors?.fromAccount?.message}</span>
-            )}
-          </div>
+          <InputField
+            field="select"
+            arr={accountData}
+            name="toAccount"
+            register={register}
+            error={errors?.toAccount}
+          />
 
-          <div>
-            <label htmlFor="">Transaction: To Account</label>
-            <select defaultValue={""} {...register("toAccount")}>
-              <option disabled value="">
-                To Account
-              </option>
-              {accountData.map((a, i) => (
-                <option value={a} key={i}>
-                  {a}
-                </option>
-              ))}
-            </select>
-            {errors?.toAccount && (
-              <span className="err">{errors?.toAccount?.message}</span>
-            )}
-          </div>
-
-          <div>
-            <label htmlFor="">Amount:</label>
-            <input type="number" {...register("amount")} />
-            {errors?.amount && (
-              <span className="err">{errors?.amount?.message}</span>
-            )}
-          </div>
-
+          <InputField
+            type="number"
+            name="amount"
+            register={register}
+            error={errors?.amount}
+          />
           <div>
             <label htmlFor="">Receipt:</label>
             <input
@@ -302,14 +260,12 @@ const Form = () => {
             )}
           </div>
 
-          <div>
-            <label htmlFor="">Notes:</label>
-            <textarea {...register("notes")} />
-            {errors?.notes && (
-              <span className="err">{errors?.notes?.message}</span>
-            )}
-          </div>
-
+          <InputField
+            field="textarea"
+            name="notes"
+            register={register}
+            error={errors?.notes}
+          />
           <div>
             <Button variant="contained" type="submit">
               {id ? "UPDATE" : "ADD DATA"}

@@ -1,5 +1,5 @@
 import React from "react";
-import Form from "./common/Form";
+import Form from "./common/Form/Form";
 
 //MUI
 import Navigation from "./common/Navigation";
