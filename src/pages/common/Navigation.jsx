@@ -75,7 +75,7 @@ export default function Navigation() {
           { text: "Add", link: "/finance-form", icon: <AddIcon /> },
           { text: "Show Data", link: "/transactions", icon: <ShowIcon /> },
         ].map((obj, index) => (
-          <Link to={obj.link} key={index}>
+          <Link to={obj.link} key={index} style={{textDecoration:"none",color:"black"}}>
             <ListItem key={obj.text} disablePadding>
               <ListItemButton>
                 <ListItemIcon>{obj.icon}</ListItemIcon>

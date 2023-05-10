@@ -5,12 +5,12 @@ import useFinanceContext from "../context/FinanceContext";
 const GroupBy = () => {
   const [toggleRemove, setToggleRemove] = useState("d-none");
 
-  const {oldData, setTrans: setData } = useFinanceContext();
+  const {trans, setGroup } = useFinanceContext();
 
   const setGroupBy = (e) => {
     setToggleRemove("");
     const fieldName = e.target.value;
-    const cloneData = oldData && [...oldData];
+    const cloneData = trans && [...trans];
 
     const groupByCategory = cloneData?.length > 0 && cloneData?.reduce((group, product) => {
       const category = product[fieldName];
@@ -19,11 +19,11 @@ const GroupBy = () => {
       return group;
     }, {});
 
-    setData(groupByCategory);
+    setGroup(groupByCategory);
   };
 
   const removeFilter = () => {
-    setData(oldData);
+    setGroup({});
     setToggleRemove("d-none");
   };
 

@@ -38,16 +38,16 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-const MaterialTable = ({ title, sort, arr, sortMethod }) => {
-  
+const MaterialTable = ({ title, arr }) => {
   const [myArr, setMyArr] = useState([{}]);
   const [old, setOld] = useState([{}]);
+  const [sortMethod, setSortMethod] = useState(1);
   const [pagination, setPagination] = useState({
     start: 0,
     limit: 3,
     page: 1,
   });
-  const { trans, setTrans, oldData, setOldData } = useFinanceContext();
+  const { trans, setTrans } = useFinanceContext();
 
   useEffect(() => {
     setOld([...arr]);
@@ -79,24 +79,25 @@ const MaterialTable = ({ title, sort, arr, sortMethod }) => {
   };
 
   const deleteData = (id, title) => {
-    const newData = arr?.findIndex((data) => data?.id === parseInt(id));
-    // const newDataForTrans = trans?.filter(data => data.id !== parseInt(id));
-    if (Array.isArray(trans)) {
-      let transClone = [...trans];
-      transClone.splice(newData, 1);
-      setMyArr(transClone);
-      setTrans(transClone);
-    } else {
-      const cloneObj = trans;
-      const curIndex = cloneObj[title].findIndex((cur) => cur.id === id);
-      cloneObj[title].splice(curIndex, 1);
-      setTrans(cloneObj);
-      setMyArr(cloneObj[title]);
+    setTrans((prev) => prev.filter((cur) => cur.id !== parseInt(id)));
+    if (title)
+      setMyArr((prev) => prev.filter((cur) => cur.id !== parseInt(id)));
+  };
 
+  const sort = (name) => {
+    if (sortMethod > 2) {
+      setSortMethod(1);
+    } else {
+      setSortMethod(sortMethod + 1);
     }
-    //set old data
-    const setNewOldData = oldData.filter((cur) => cur.id !== parseInt(id));
-    setOldData(setNewOldData);
+    let cloneData = [...arr];
+    cloneData = [...trans];
+    if (sortMethod === 1) {
+      cloneData = cloneData.sort((a, b) => (a[name] > b[name] ? 1 : -1));
+    } else if (sortMethod === 2) {
+      cloneData = cloneData.sort((a, b) => (a[name] < b[name] ? 1 : -1));
+    }
+    setMyArr(cloneData);
   };
 
   return (
