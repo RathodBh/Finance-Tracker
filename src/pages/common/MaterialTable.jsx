@@ -83,7 +83,7 @@ const MaterialTable = ({ title, arr }) => {
 
     const deleteData = (id, title) => {
         
-        dispatch(setTrans((prev) => prev.filter((cur) => cur.id !== parseInt(id))));
+        dispatch(setTrans(trans.filter((cur) => cur.id !== parseInt(id))));
         if (title)
             setMyArr((prev) => prev.filter((cur) => cur.id !== parseInt(id)));
     };
