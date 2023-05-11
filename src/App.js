@@ -2,13 +2,11 @@ import React from "react";
 import RoutesFile from "./Route";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { FinanceWrapperContext } from "./context/FinanceContext";
 import ErrorBoundary from "./utils/ErrorBoundary";
 
 const App = () => {
   return (
     <ErrorBoundary>
-      <FinanceWrapperContext>
         <RoutesFile />
 
         <ToastContainer
@@ -23,7 +21,6 @@ const App = () => {
           pauseOnHover
           theme="light"
         />
-      </FinanceWrapperContext>
     </ErrorBoundary>
   );
 };

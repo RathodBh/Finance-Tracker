@@ -1,5 +1,5 @@
 import React from "react";
-import { columns } from "../../../../utils/Constants";
+import { columns } from "../../../utils/Constants";
 
 const InputField = ({
   field = "input",
