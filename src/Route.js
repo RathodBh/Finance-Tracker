@@ -1,13 +1,13 @@
 import React from "react";
-import Add from "./pages/Add";
+import Add from "./pages/Transactions/Add"
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Show from "./pages/common/Show";
-import ShowInfo from "./pages/TransactionInfo";
-import Login from "./pages/Login";
-import SignUp from "./pages/SignUp";
+import ShowInfo from "./pages/Transactions/TransactionInfo";
+import Login from "./pages/Auth/Login";
+import SignUp from "./pages/Auth/SignUp";
 import PrivateRoutes, { CheckLoginAuth } from "./utils/PrivateRoutes";
 
-const RoutesFile = () => {
+const RoutesFile = () => { 
   return (
     <BrowserRouter>
       <Routes>

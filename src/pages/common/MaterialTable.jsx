@@ -13,7 +13,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 
 import { columns } from "../../utils/Constants";
 import { Link } from "react-router-dom";
-import Search from "../Search";
+import Search from "./Search";
 import { Pagination } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { setTrans } from "../../store/slices/financeSlice";

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { columns } from "../utils/Constants";
+import { columns } from "../../utils/Constants";
 import { useSelector, useDispatch } from "react-redux";
-import { setGroup } from "../store/slices/financeSlice";
+import { setGroup } from "../../store/slices/financeSlice";
 // import {}
 
 const GroupBy = () => {

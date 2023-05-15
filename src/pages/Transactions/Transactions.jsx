@@ -1,6 +1,6 @@
 import React from "react";
 
-import MaterialTable from "./common/MaterialTable";
+import MaterialTable from "../common/MaterialTable";
 import { useSelector } from "react-redux";
 
 const ShowData = () => {
