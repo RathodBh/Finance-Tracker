@@ -1,19 +1,25 @@
 import { Navigate, Outlet } from "react-router-dom";
+import { getCookie } from "../services/cookie";
 
 const PrivateRoutes = () => {
-  let auth = false;
-  if (localStorage.getItem("FinanceToken")) {
-    auth = true;
-  }
-  return auth ? <Outlet /> : <Navigate to="/login" />;
+    const { token } = getCookie();
+    console.log("🚀 ~ file: PrivateRoutes.js:6 ~ PrivateRoutes ~ token:", token)
+    let auth = false;
+
+    if (token?.length > 0) {
+        auth = true;
+    }
+    return auth ? <Outlet /> : <Navigate to="/login" />;
 };
 
 const CheckLoginAuth = () => {
-  let auth = true;
-  if (localStorage.getItem("FinanceToken")) {
-    auth = false;
-  }
-  return auth ? <Outlet /> : <Navigate to="/finance-form" />;
+    let auth = true;
+    const { token } = getCookie();
+
+    if (token?.length > 0) {
+        auth = false;
+    }
+    return auth ? <Outlet /> : <Navigate to="/finance-form" />;
 };
 
 export { CheckLoginAuth };

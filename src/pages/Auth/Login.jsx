@@ -8,6 +8,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 import generate from "../../utils/generateToken";
+import { setCookie } from "../../services/cookie";
 
 const loginSchema = yup.object().shape({
     email: yup.string().email().required("Please enter email"),
@@ -35,13 +36,10 @@ const Login = () => {
         const userEmail = res && res[0]?.email;
         if (res?.length > 0) {
             const auth = generate();
-            localStorage.setItem(
-                "FinanceToken",
-                JSON.stringify({ auth, email: userEmail })
-            );
+            setCookie(userEmail, auth);
             toast.success("Login successfully");
 
-            navigate("/finance-form");
+            navigate("/");  
         } else {
             toast.error("Email or password is incorrect");
         }
@@ -91,7 +89,7 @@ const Login = () => {
                         SUBMIT
                     </Button>
                     <p className="m-2">
-                        Don't have an account? Create now{" "}
+                        Don't have an account? Create now &nbsp;
                         <Link to="/register">Register</Link>
                     </p>
                 </form>
