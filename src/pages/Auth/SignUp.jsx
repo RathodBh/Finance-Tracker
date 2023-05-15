@@ -5,7 +5,8 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { toast } from "react-toastify";
-
+import { useDispatch } from "react-redux";
+import { addUser } from "../../store/slices/userSlice";
 
 const userSchema = yup.object().shape({
   email: yup.string().email().required("Please enter your email"),
@@ -20,6 +21,8 @@ const userSchema = yup.object().shape({
 });
 
 const SignUp = () => {
+  const dispatch = useDispatch();
+
   const {
     register,
     handleSubmit,
@@ -29,23 +32,8 @@ const SignUp = () => {
   });
 
   const submitData = ({ email, password }) => {
-    // window.alert("Registration success, You can login now");
-    console.log(email, password);
-    toast.success("Hello");
-    let oldData = [];
-    if (localStorage.getItem("FinanceUsers")) {
-      oldData = JSON.parse(localStorage.getItem("FinanceUsers"));
-    }
-    localStorage.setItem(
-      "FinanceUsers",
-      JSON.stringify([
-        ...oldData,
-        {
-          email,
-          password,
-        },
-      ])
-    );
+    dispatch(addUser({email, password}))
+    toast.success("Registration successfully, Now you can login");
   };
 
   return (
