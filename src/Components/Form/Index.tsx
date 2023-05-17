@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import * as Yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -12,6 +12,8 @@ import {
 } from "../../utils/Constants";
 import { useParams } from "react-router-dom";
 import toBase64 from "../../utils/toBase64";
+import { Button, Typography } from "antd";
+const { Title } = Typography;
 
 const addSchema = Yup.object().shape(
     {
@@ -39,12 +41,9 @@ const addSchema = Yup.object().shape(
                         "valid-size",
                         "Max allowed size is 1MB",
                         (value) => {
-                            console.log("VAL", value);
                             if (value instanceof FileList) {
-                                console.log("Yes");
                                 return value[0]?.size <= MAX_FILE_SIZE;
                             } else {
-                                console.log("No");
                                 return true;
                             }
                         }
@@ -55,8 +54,34 @@ const addSchema = Yup.object().shape(
     [["receipt", "receipt"]]
 );
 
-const Form = () => {
+const Form: React.FC = () => {
     const { id } = useParams<string>();
+    const transId: number = parseInt(id as string);
+    const [transaction,setTractions] = useState<Transaction | undefined>();
+
+    useEffect(() => {
+        if (id) {
+            console.log("MILA")
+            const local: Transaction[] =
+                localStorage.getItem("TS") &&
+                JSON.parse(localStorage.getItem("TS") as string);
+    
+            const temp = local.find((cur) => cur.id === transId);
+            console.log("🚀 ~ file: Index.tsx:69 ~ useEffect ~ temp:", temp)
+            // console.log("🚀 ~ file: Index.tsx:66 ~ transaction:", transaction);
+            // transaction &&
+           setTractions(temp)
+            // if (transaction) {
+            //     for (const [key, value] of Object.entries(transaction)) {
+            //         console.log(key, value);
+            //         // setValue && setValue(key, value);
+            //     }
+            // }
+            // setValue && setValue()
+        }
+    },[id])
+    const values: any = { ...transaction };
+    console.log("🚀 ~ file: Index.tsx:84 ~ values:", values)
     const {
         register,
         handleSubmit,
@@ -64,79 +89,66 @@ const Form = () => {
         getValues,
         setValue,
     } = useForm<Transaction>({
+        values,
         resolver: yupResolver(addSchema),
     });
-
     const submitData = async (data: Transaction) => {
-        
         if (data?.receipt) {
-            const convertedFile = await toBase64(Object.values(data.receipt)[0]);
+            const convertedFile = await toBase64(
+                Object.values(data.receipt)[0]
+            );
             data.receipt = convertedFile as string;
         }
-        // console.log(data);
+        data.id = new Date().getTime();
 
+        // if(localStorage.getItem("TS"))
         localStorage.setItem("TS", JSON.stringify([data]));
     };
 
+    const allValues = { errors, register, setValue, getValues };
+
     return (
         <>
-            {id ? "Edit" : "Add"} Transaction
+            <Title level={3}>{id ? "Edit" : "Add"} Transaction</Title>
             <div>
                 <form onSubmit={handleSubmit(submitData)}>
-                    <FormField
-                        name="transDate"
-                        type="date"
-                        register={register}
-                        errors={errors}
-                    />
+                    <FormField name="transDate" type="date" {...allValues} />
                     <FormField
                         name="monthYear"
                         type="select"
                         arr={monthsNames}
-                        register={register}
-                        errors={errors}
+                        {...allValues}
                     />
                     <FormField
                         name="transactionType"
                         type="select"
                         arr={transactionTypes}
-                        register={register}
-                        errors={errors}
+                        {...allValues}
                     />
                     <FormField
                         name="fromAccount"
                         type="select"
                         arr={accountData}
-                        register={register}
-                        errors={errors}
+                        {...allValues}
                     />
                     <FormField
                         name="toAccount"
                         type="select"
                         arr={accountData}
-                        register={register}
-                        errors={errors}
+                        {...allValues}
                     />
-                    <FormField
-                        name="amount"
-                        type="number"
-                        register={register}
-                        errors={errors}
-                    />
-                    <FormField
-                        name="receipt"
-                        type="file"
-                        register={register}
-                        errors={errors}
-                    />
+                    <FormField name="amount" type="number" {...allValues} />
+                    <FormField name="receipt" type="file" {...allValues} />
 
-                    <FormField
-                        name="notes"
-                        type="textarea"
-                        register={register}
-                        errors={errors}
-                    />
-                    <button type="submit">Add</button>
+                    <FormField name="notes" type="textarea" {...allValues} />
+                    <Button
+                        type="primary"
+                        htmlType="submit"
+                        size="large"
+                        style={{ marginTop: "20px" }}
+                    >
+                        Add
+                    </Button>
                 </form>
             </div>
         </>

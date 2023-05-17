@@ -1,6 +1,7 @@
 import React from "react";
 import Form from "../Form/Index";
-const TransactionForm = () => {
+
+const TransactionForm: React.FC = () => {
     return (
         <>
             <Form />

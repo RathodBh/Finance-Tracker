@@ -1,4 +1,5 @@
 export default interface Transaction {
+    id:number;
     transDate: string;
     monthYear: string;
     transactionType: string;

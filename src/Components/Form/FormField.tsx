@@ -6,8 +6,14 @@ import {
     UseFormRegister,
     UseFormSetValue,
 } from "react-hook-form";
-import { columns } from "../../utils/Constants";
+import columnLabel from "../../utils/columnLabel";
 import toBase64 from "../../utils/toBase64";
+// import Input from "antd/es/input/Input";
+import { DatePickerProps, Select, DatePicker, Space, Button } from "antd";
+import { Input } from "antd";
+import { Typography } from "antd";
+const { TextArea } = Input;
+const { Title } = Typography;
 
 interface Props {
     type?: string;
@@ -43,102 +49,146 @@ const FormField = (props: Props) => {
         setValue && setValue(name, "");
         setPreview("");
     };
+    const onDateChange: DatePickerProps["onChange"] = (date, dateString) => {
+        setValue && setValue(name, dateString as string);
+    };
+    const onSelectChange = (value: string) => {
+        setValue && setValue(name, value as string);
+        // console.log(`selected ${value}`);
+    };
+    const onDefaultChange = (
+        e:
+            | React.ChangeEvent<HTMLInputElement>
+            | React.ChangeEvent<HTMLTextAreaElement>
+    ) => {
+        setValue && setValue(name, e.target.value as string);
+        // console.log(`selected ${e.target.value}`);
+    };
+
+    // const onSelectSearch = (value: string) => {
+    //     // console.log("search:", value);
+    // };
+
     const Field = () => {
         switch (type) {
             case "date":
                 return (
-                    <input
-                        type="date"
-                        {...register(name)}
-                        placeholder={"Enter " + columnLabel()}
-                    ></input>
+                    <>
+                        <DatePicker
+                            size="large"
+                            {...register(name)}
+                            // name={name}
+                            onChange={onDateChange}
+                            style={{ width: "100%" }}
+                            placeholder={"Enter " + columnLabel(name)}
+                        />
+                    </>
                 );
             case "select":
                 return (
                     <>
-                        <select defaultValue={""} {...register(name)}>
-                            <option value={""} disabled>
-                                Select {columnLabel()}
-                            </option>
-                            {arr?.map((cur) => {
-                                return (
-                                    <option value={cur} key={cur}>
-                                        {cur}
-                                    </option>
-                                );
+                        <Select
+                            {...register(name)}
+                            showSearch
+                            placeholder={"Select " + columnLabel(name)}
+                            optionFilterProp="children"
+                            onChange={onSelectChange}
+                            // onSearch={onSelectSearch}
+                            filterOption={(input, option) =>
+                                (option?.label ?? "")
+                                    .toLowerCase()
+                                    .includes(input.toLowerCase())
+                            }
+                            options={arr?.map((cur) => {
+                                return {
+                                    value: cur,
+                                    label: cur,
+                                };
                             })}
-                        </select>
+                            size="large"
+                            style={{ width: "100%" }}
+                        />
                     </>
                 );
             case "textarea":
                 return (
                     <>
-                        <textarea
+                        <TextArea
+                            size="large"
                             {...register(name)}
-                            style={{ resize: "none" }}
-                            placeholder={"Enter " + columnLabel()}
+                            style={{ width: "100%" }}
+                            onChange={onDefaultChange}
+                            autoSize={{ minRows: 2, maxRows: 4 }}
+                            placeholder={"Enter " + columnLabel(name)}
                         />
                     </>
                 );
             case "number":
                 return (
-                    <input
+                    <Input
+                        size="large"
                         type="number"
+                        // name={name}
                         {...register(name)}
-                        placeholder={"Enter " + columnLabel()}
+                        onChange={onDefaultChange}
+                        // style={{ width: "100%" }}
+                        placeholder={"Enter " + columnLabel(name)}
                     />
                 );
             case "file":
                 return (
                     <>
-                        <input
+                        <Input
                             type="file"
                             {...register(name)}
+                            style={{
+                                width: "100%",
+                                border: "1px solid gainsboro",
+                                padding: " 10px",
+                            }}
                             onChange={(e) => previewImg(e)}
                         />
                         {preview && (
                             <>
                                 <img
                                     src={preview}
-                                    style={{ height: "100px", width: "100px" }}
+                                    style={{
+                                        height: "100px",
+                                        width: "100px",
+                                        margin: "20px 0",
+                                    }}
                                 />
-                                <button
-                                    type="button"
+                                <Button
+                                    type="primary"
                                     onClick={(e) => removePreview()}
                                 >
                                     Remove
-                                </button>
+                                </Button>
                             </>
                         )}
                     </>
                 );
             default:
                 return (
-                    <input
-                        type="text"
+                    <Input
+                        size="large"
                         {...register(name)}
-                        placeholder={"Enter " + columnLabel()}
+                        style={{ width: "100%" }}
+                        placeholder={"Enter " + columnLabel(name)}
                     />
                 );
-        }
-    };
-
-    const columnLabel = () => {
-        const findLabel: { show: string; db: string } | undefined =
-            columns?.find((column) => column.db === name);
-
-        if (findLabel) {
-            return findLabel["show"];
         }
     };
 
     return (
         <>
             <div>
-                Enter {columnLabel()}
+                <Title level={5}>Enter {columnLabel(name)}</Title>
                 {Field()}
                 {errors[name] && (
-                    <span className="err">{errors[name]?.message}</span>
+                    <span style={{ color: "red" }}>
+                        {errors[name]?.message}
+                    </span>
                 )}
             </div>
         </>

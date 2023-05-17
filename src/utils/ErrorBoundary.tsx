@@ -23,8 +23,8 @@ class ErrorBoundary extends Component<Props, State> {
     public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
         console.error("Uncaught error:", error, errorInfo);
         // this.state.hasError = false;
-        // return { hasError: true };
-        this.setState({ hasError: true });
+        return { hasError: true };
+        // this.setState({ hasError: true });
     }
 
     public render() {
