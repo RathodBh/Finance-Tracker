@@ -1,19 +1,19 @@
-import React, { useState } from "react";
+import React, { Dispatch, SetStateAction } from "react";
 import Transaction from "../../Modals/transactions";
+import dayjs from "dayjs";
+import "dayjs/locale/zh-cn";
 import {
+    Control,
+    Controller,
     FieldErrors,
-    UseFormGetValues,
-    UseFormRegister,
     UseFormSetValue,
 } from "react-hook-form";
 import columnLabel from "../../utils/columnLabel";
 import toBase64 from "../../utils/toBase64";
 // import Input from "antd/es/input/Input";
-import { DatePickerProps, Select, DatePicker, Space, Button } from "antd";
+import { DatePickerProps, Select, DatePicker, Button } from "antd";
 import { Input } from "antd";
-import { Typography } from "antd";
 const { TextArea } = Input;
-const { Title } = Typography;
 
 interface Props {
     type?: string;
@@ -26,127 +26,166 @@ interface Props {
         | "amount"
         | "notes"
         | "receipt";
-    register: UseFormRegister<Transaction>;
+    // register: UseFormRegister<Transaction>;
     arr?: string[];
     errors: FieldErrors<Transaction>;
-    getValues?: UseFormGetValues<Transaction> | undefined;
+    // getValues?: UseFormGetValues<Transaction> | undefined;
     setValue?: UseFormSetValue<Transaction> | undefined;
+    control: Control<Transaction>;
+    preview?:string | undefined;
+    setPreview?: Dispatch<SetStateAction<string>> | undefined;
 }
 
 const FormField = (props: Props) => {
-    const { type, name, register, arr, errors, getValues, setValue } = props;
-    const [preview, setPreview] = useState("");
+    const { type, name, arr, errors, setValue, control, preview, setPreview } = props;
+    // const [preview, setPreview] = useState<string>("");
+
+   
 
     const previewImg = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        console.log("OPEN");
         if (e.target.files) {
             const file = e.target.files[0];
             const convertedFile = await toBase64(file);
-            if (setValue) setValue(name, file);
-            setPreview(convertedFile as string);
+            console.log(
+                "🚀 ~ file: FormField.tsx:53 ~ previewImg ~ convertedFile:",
+                convertedFile
+            );
+            // if (setValue) setValue(name, convertedFile as string);
+            setPreview && setPreview(convertedFile as string);
         }
     };
     const removePreview = () => {
         setValue && setValue(name, "");
-        setPreview("");
+        setPreview && setPreview("");
     };
     const onDateChange: DatePickerProps["onChange"] = (date, dateString) => {
         setValue && setValue(name, dateString as string);
     };
-    const onSelectChange = (value: string) => {
-        setValue && setValue(name, value as string);
-        // console.log(`selected ${value}`);
-    };
-    const onDefaultChange = (
-        e:
-            | React.ChangeEvent<HTMLInputElement>
-            | React.ChangeEvent<HTMLTextAreaElement>
-    ) => {
-        setValue && setValue(name, e.target.value as string);
-        // console.log(`selected ${e.target.value}`);
-    };
-
-    // const onSelectSearch = (value: string) => {
-    //     // console.log("search:", value);
-    // };
-
     const Field = () => {
         switch (type) {
             case "date":
                 return (
                     <>
-                        <DatePicker
-                            size="large"
-                            {...register(name)}
-                            // name={name}
-                            onChange={onDateChange}
-                            style={{ width: "100%" }}
-                            placeholder={"Enter " + columnLabel(name)}
+                        <Controller
+                            name={name}
+                            control={control}
+                            render={({ field }) => {
+                                return field.value !== "" ? (
+                                    <DatePicker
+                                        value={dayjs(
+                                            field.value as string,
+                                            "YYYY-MM-DD"
+                                        )}
+                                        onChange={onDateChange}
+                                        style={{ width: "100%" }}
+                                    />
+                                ) : (
+                                    <DatePicker
+                                        onChange={onDateChange}
+                                        style={{ width: "100%" }}
+                                    />
+                                );
+                            }}
                         />
                     </>
                 );
             case "select":
                 return (
                     <>
-                        <Select
-                            {...register(name)}
-                            showSearch
-                            placeholder={"Select " + columnLabel(name)}
-                            optionFilterProp="children"
-                            onChange={onSelectChange}
-                            // onSearch={onSelectSearch}
-                            filterOption={(input, option) =>
-                                (option?.label ?? "")
-                                    .toLowerCase()
-                                    .includes(input.toLowerCase())
-                            }
-                            options={arr?.map((cur) => {
-                                return {
-                                    value: cur,
-                                    label: cur,
+                        <Controller
+                            name={name}
+                            control={control}
+                            render={({ field }) => {
+                                const newField = {
+                                    ...field,
+                                    value: field.value as string,
                                 };
-                            })}
-                            size="large"
-                            style={{ width: "100%" }}
+                                return (
+                                    <Select
+                                        showSearch
+                                        placeholder={
+                                            "Select " + columnLabel(name)
+                                        }
+                                        optionFilterProp="children"
+                                        // onSearch={onSelectSearch}
+                                        filterOption={(input, option) =>
+                                            (option?.label ?? "")
+                                                .toLowerCase()
+                                                .includes(input.toLowerCase())
+                                        }
+                                        options={arr?.map((cur) => {
+                                            return {
+                                                value: cur,
+                                                label: cur,
+                                            };
+                                        })}
+                                        style={{ width: "100%" }}
+                                        {...newField}
+                                    />
+                                );
+                            }}
                         />
                     </>
                 );
             case "textarea":
                 return (
                     <>
-                        <TextArea
-                            size="large"
-                            {...register(name)}
-                            style={{ width: "100%" }}
-                            onChange={onDefaultChange}
-                            autoSize={{ minRows: 2, maxRows: 4 }}
-                            placeholder={"Enter " + columnLabel(name)}
+                        <Controller
+                            name={name}
+                            control={control}
+                            render={({ field }) => {
+                                const newField = {
+                                    ...field,
+                                    value: field.value as string,
+                                };
+                                return (
+                                    <TextArea
+                                        placeholder={
+                                            "Enter " + columnLabel(name)
+                                        }
+                                        autoSize={{ minRows: 2, maxRows: 4 }}
+                                        {...newField}
+                                    />
+                                );
+                            }}
                         />
                     </>
                 );
             case "number":
                 return (
-                    <Input
-                        size="large"
-                        type="number"
-                        // name={name}
-                        {...register(name)}
-                        onChange={onDefaultChange}
-                        // style={{ width: "100%" }}
-                        placeholder={"Enter " + columnLabel(name)}
+                    <Controller
+                        name={name}
+                        control={control}
+                        render={({ field }) => {
+                            const newField = {
+                                ...field,
+                                value: field.value as number,
+                            };
+                            return <Input type="number" {...newField} />;
+                        }}
                     />
                 );
             case "file":
                 return (
                     <>
-                        <Input
-                            type="file"
-                            {...register(name)}
-                            style={{
-                                width: "100%",
-                                border: "1px solid gainsboro",
-                                padding: " 10px",
+                        <Controller
+                            name={name}
+                            control={control}
+                            // onChange={(e) => {previewImg()}}
+                            render={({ field }) => {
+                                const newField = {
+                                    ...field,
+                                    value: "",
+                                };
+                                return (
+                                    <Input
+                                        type="file"
+                                        {...newField}
+                                        onChange={previewImg}
+                                    />
+                                );
                             }}
-                            onChange={(e) => previewImg(e)}
                         />
                         {preview && (
                             <>
@@ -170,11 +209,16 @@ const FormField = (props: Props) => {
                 );
             default:
                 return (
-                    <Input
-                        size="large"
-                        {...register(name)}
-                        style={{ width: "100%" }}
-                        placeholder={"Enter " + columnLabel(name)}
+                    <Controller
+                        name={name}
+                        control={control}
+                        render={({ field }) => {
+                            const newField = {
+                                ...field,
+                                value: field.value as string,
+                            };
+                            return <Input type="text" {...newField} />;
+                        }}
                     />
                 );
         }
@@ -182,8 +226,8 @@ const FormField = (props: Props) => {
 
     return (
         <>
-            <div>
-                <Title level={5}>Enter {columnLabel(name)}</Title>
+            <div style={{ margin: "20px 0" }}>
+                Enter {columnLabel(name)}
                 {Field()}
                 {errors[name] && (
                     <span style={{ color: "red" }}>

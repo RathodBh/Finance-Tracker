@@ -3,12 +3,11 @@ import RoutesFile from "./Route";
 import {
     MenuFoldOutlined,
     MenuUnfoldOutlined,
-    UploadOutlined,
-    UserOutlined,
-    VideoCameraOutlined,
+    FolderViewOutlined,
+    FileAddOutlined,
 } from "@ant-design/icons";
 import { Layout, Menu, Button, theme } from "antd";
-import { BrowserRouter, Link, useNavigate } from "react-router-dom";
+import { BrowserRouter, Link } from "react-router-dom";
 import Title from "antd/es/typography/Title";
 function App() {
     const { Header, Sider, Content } = Layout;
@@ -17,36 +16,48 @@ function App() {
         token: { colorBgContainer },
     } = theme.useToken();
 
-    // const navigate = useNavigate();
+    const navs = [
+        {
+            to: "/",
+            label: "Add",
+            icon: <FileAddOutlined />,
+        },
+        {
+            to: "/show-transaction",
+            label: "Show",
+            icon: <FolderViewOutlined />,
+        },
+    ];
 
     return (
         <BrowserRouter>
             <Layout>
-                <Sider trigger={null} collapsible collapsed={collapsed}>
+                <Sider
+                    trigger={null}
+                    collapsible
+                    collapsed={collapsed}
+                    style={{
+                        position: "sticky",
+                        height: "calc(100vh - 20px)",
+                        top: "10px",
+                        bottom: "10px",
+                    }}
+                >
                     <div className="demo-logo-vertical" />
                     <Menu
                         theme="dark"
                         mode="inline"
-                        defaultSelectedKeys={["1"]}
+                        defaultSelectedKeys={["0"]}
+                        
                     >
-                        <Menu.Item key="1">
-                            <Link to="/">
-                                <UserOutlined />
-                                <span>nav 1</span>
-                            </Link>
-                        </Menu.Item>
-                        <Menu.Item key="2">
-                            <Link to="/show-transaction">
-                                <VideoCameraOutlined />
-                                <span>nav 2</span>
-                            </Link>
-                        </Menu.Item>
-                        <Menu.Item key="3">
-                            <Link to="/nav-3">
-                                <UploadOutlined />
-                                <span>nav 3</span>
-                            </Link>
-                        </Menu.Item>
+                        {navs.map((nav, i) => (
+                            <Menu.Item key={i}>
+                                <Link to={nav.to}>
+                                    {nav.icon}
+                                    <span>{nav.label}</span>
+                                </Link>
+                            </Menu.Item>
+                        ))}
                     </Menu>
                 </Sider>
                 <Layout>
@@ -57,6 +68,9 @@ function App() {
                             display: "flex",
                             justifyContent: "space-between",
                             alignItems: "center",
+                            position: "sticky",
+                            top: "0",
+                            zIndex:"10"
                         }}
                     >
                         <div
@@ -82,7 +96,7 @@ function App() {
                                     height: 64,
                                 }}
                             />
-                            <Title level={3} style={{margin:"0"}}>
+                            <Title level={3} style={{ margin: "0" }}>
                                 Finance Tracker
                             </Title>
                         </div>

@@ -1,12 +1,12 @@
 import React from "react";
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import {  Route, Routes } from "react-router-dom";
 // import Show from "./pages/common/Show";
 // import ShowInfo from "./pages/Transactions/TransactionInfo";
 // import Login from "./pages/Auth/Login";
 // import SignUp from "./pages/Auth/SignUp";
-import PrivateRoutes, { CheckLoginAuth } from "./utils/PrivateRoute";
+// import PrivateRoutes, { CheckLoginAuth } from "./utils/PrivateRoute";
 import TransactionForm from "./Components/Transactions/TransactionForm";
-import Form from "./Components/Form/Index";
+// import Form from "./Components/Form/Index";
 import ShowTransaction from "./Components/Transactions/ShowTransaction";
 
 const RoutesFile = () => {

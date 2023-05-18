@@ -11,8 +11,14 @@ import {
     MAX_FILE_SIZE,
 } from "../../utils/Constants";
 import { useParams } from "react-router-dom";
-import toBase64 from "../../utils/toBase64";
-import { Button, Typography } from "antd";
+import { Button, Typography, message } from "antd";
+import { RootState } from "../../store/Index";
+import { useDispatch, useSelector } from "react-redux";
+import {
+    addTransaction,
+    updateTransaction,
+} from "../../store/Slices/transactionSlice";
+
 const { Title } = Typography;
 
 const addSchema = Yup.object().shape(
@@ -53,66 +59,80 @@ const addSchema = Yup.object().shape(
     },
     [["receipt", "receipt"]]
 );
+const initialVal: Transaction = {
+    transDate: "",
+    monthYear: "",
+    transactionType: "",
+    fromAccount: "",
+    toAccount: "",
+    amount: 0,
+    notes: "",
+    receipt: "",
+};
 
 const Form: React.FC = () => {
     const { id } = useParams<string>();
-    const transId: number = parseInt(id as string);
-    const [transaction,setTractions] = useState<Transaction | undefined>();
-
+    const [transaction, setTransaction] = useState<Transaction | undefined>(
+        initialVal
+    );
+    const [preview, setPreview] = useState<string>("");
+    const [messageApi, contextHolder] = message.useMessage();
+    const state = useSelector((state: RootState) => state.transaction.value);
     useEffect(() => {
         if (id) {
-            console.log("MILA")
-            const local: Transaction[] =
-                localStorage.getItem("TS") &&
-                JSON.parse(localStorage.getItem("TS") as string);
-    
-            const temp = local.find((cur) => cur.id === transId);
-            console.log("🚀 ~ file: Index.tsx:69 ~ useEffect ~ temp:", temp)
-            // console.log("🚀 ~ file: Index.tsx:66 ~ transaction:", transaction);
-            // transaction &&
-           setTractions(temp)
-            // if (transaction) {
-            //     for (const [key, value] of Object.entries(transaction)) {
-            //         console.log(key, value);
-            //         // setValue && setValue(key, value);
-            //     }
-            // }
-            // setValue && setValue()
+            const local: Transaction[] = [...state];
+            const temp =
+                local &&
+                local?.find((cur) => cur?.id === parseInt(id as string));
+            setTransaction(temp);
+            setPreview(temp?.receipt as string);
+        } else {
+            setTransaction(initialVal);
+            setPreview("");
         }
-    },[id])
+        // eslint-disable-next-line
+    }, [id]);
+
     const values: any = { ...transaction };
-    console.log("🚀 ~ file: Index.tsx:84 ~ values:", values)
     const {
-        register,
         handleSubmit,
         formState: { errors },
-        getValues,
         setValue,
+        control,
     } = useForm<Transaction>({
         values,
         resolver: yupResolver(addSchema),
     });
-    const submitData = async (data: Transaction) => {
-        if (data?.receipt) {
-            const convertedFile = await toBase64(
-                Object.values(data.receipt)[0]
-            );
-            data.receipt = convertedFile as string;
-        }
-        data.id = new Date().getTime();
 
-        // if(localStorage.getItem("TS"))
-        localStorage.setItem("TS", JSON.stringify([data]));
+    const dispatch = useDispatch();
+
+    const success = (msg: string) => {
+        messageApi.open({
+            type: "success",
+            content: msg,
+        });
+    };
+    const submitData = async (data: Transaction) => {
+        if (preview) data.receipt = preview;
+        if (id) {
+            dispatch(updateTransaction(data));
+            success("Data Updated successfully");
+        } else {
+            dispatch(addTransaction(data));
+            success("Data Inserted successfully");
+        }
     };
 
-    const allValues = { errors, register, setValue, getValues };
+    const allValues = { errors, setValue, control };
 
     return (
         <>
+            {contextHolder}
             <Title level={3}>{id ? "Edit" : "Add"} Transaction</Title>
             <div>
                 <form onSubmit={handleSubmit(submitData)}>
                     <FormField name="transDate" type="date" {...allValues} />
+
                     <FormField
                         name="monthYear"
                         type="select"
@@ -138,7 +158,13 @@ const Form: React.FC = () => {
                         {...allValues}
                     />
                     <FormField name="amount" type="number" {...allValues} />
-                    <FormField name="receipt" type="file" {...allValues} />
+                    <FormField
+                        name="receipt"
+                        type="file"
+                        {...allValues}
+                        preview={preview}
+                        setPreview={setPreview}
+                    />
 
                     <FormField name="notes" type="textarea" {...allValues} />
                     <Button
@@ -147,7 +173,7 @@ const Form: React.FC = () => {
                         size="large"
                         style={{ marginTop: "20px" }}
                     >
-                        Add
+                        {id ? "UPDATE" : "ADD"}
                     </Button>
                 </form>
             </div>

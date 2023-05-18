@@ -1,5 +1,5 @@
 export default interface Transaction {
-    id:number;
+    id?:number;
     transDate: string;
     monthYear: string;
     transactionType: string;
@@ -8,4 +8,5 @@ export default interface Transaction {
     amount: number;
     notes: string;
     receipt?: FileList | File | string;
+    fl?:FileList | File | string;
 }
