@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import * as Yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import Transaction from "../../Modals/transactions";
+import success from "../../utils/generateMessage";
 import FormField from "./FormField";
 import {
     monthsNames,
@@ -76,8 +77,11 @@ const Form: React.FC = () => {
         initialVal
     );
     const [preview, setPreview] = useState<string>("");
-    const [messageApi, contextHolder] = message.useMessage();
     const state = useSelector((state: RootState) => state.transaction.value);
+    const lang = useSelector((state: RootState) => state.languages.value);
+    const [messageApi, contextHolder] = message.useMessage();
+
+
     useEffect(() => {
         if (id) {
             const local: Transaction[] = [...state];
@@ -106,20 +110,14 @@ const Form: React.FC = () => {
 
     const dispatch = useDispatch();
 
-    const success = (msg: string) => {
-        messageApi.open({
-            type: "success",
-            content: msg,
-        });
-    };
     const submitData = async (data: Transaction) => {
         if (preview) data.receipt = preview;
         if (id) {
             dispatch(updateTransaction(data));
-            success("Data Updated successfully");
+            success(messageApi,"Data Updated successfully");
         } else {
             dispatch(addTransaction(data));
-            success("Data Inserted successfully");
+            success(messageApi,"Data Inserted successfully");
         }
     };
 
@@ -128,7 +126,7 @@ const Form: React.FC = () => {
     return (
         <>
             {contextHolder}
-            <Title level={3}>{id ? "Edit" : "Add"} Transaction</Title>
+            <Title level={3}>{id ? lang.edit : lang.add}</Title>
             <div>
                 <form onSubmit={handleSubmit(submitData)}>
                     <FormField name="transDate" type="date" {...allValues} />
@@ -173,7 +171,7 @@ const Form: React.FC = () => {
                         size="large"
                         style={{ marginTop: "20px" }}
                     >
-                        {id ? "UPDATE" : "ADD"}
+                        {id ? lang.editTitle : lang.add}
                     </Button>
                 </form>
             </div>

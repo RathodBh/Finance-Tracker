@@ -1,5 +1,6 @@
 export const NAME: string = "finance_tracker";
 export const MAX_FILE_SIZE: number = 1024 * 1024;
+
 export const columns: { show: string; db: string }[] = [
     {
         show: "Transaction date",
@@ -63,4 +64,13 @@ export const accountData: string[] = [
     "Full Circle",
     "Core Realtors",
     "Big Block",
+];
+
+export const groupBy: { value: string; label: string }[] = [
+    { value: "transactionType", label: "Transaction Type" },
+    { value: "fromAccount", label: "From Account" },
+    { value: "toAccount", label: "To Account" },
+    { value: "monthYear", label: "Month Year" },
+    { value: "notes", label: "Notes" },
+    { value: "amount", label: "Amount" },
 ];

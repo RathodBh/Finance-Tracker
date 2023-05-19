@@ -5,29 +5,47 @@ import {
     MenuUnfoldOutlined,
     FolderViewOutlined,
     FileAddOutlined,
+    LogoutOutlined,
 } from "@ant-design/icons";
-import { Layout, Menu, Button, theme } from "antd";
+import { Layout, Menu, Button, theme, Select } from "antd";
 import { BrowserRouter, Link } from "react-router-dom";
 import Title from "antd/es/typography/Title";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "./store/Index";
+import { setLanguage } from "./store/Slices/languagesSlice";
 function App() {
     const { Header, Sider, Content } = Layout;
     const [collapsed, setCollapsed] = useState(false);
+    const state = useSelector((state: RootState) => state.languages.value);
+    const dispatch = useDispatch();
+
     const {
         token: { colorBgContainer },
     } = theme.useToken();
 
+    const lang: string[] = ["English", "Hindi", "Gujarati"];
     const navs = [
         {
-            to: "/",
-            label: "Add",
+            to: "/transaction",
+            label: state.add,
             icon: <FileAddOutlined />,
         },
         {
             to: "/show-transaction",
-            label: "Show",
+            label: state.showTransaction,
             icon: <FolderViewOutlined />,
         },
+        {
+            to: "/logout",
+            label: "Logout",
+            icon: <LogoutOutlined />,
+        },
     ];
+
+    const changeLang = (value: string) => {
+        dispatch(setLanguage(value));
+    };
+   
 
     return (
         <BrowserRouter>
@@ -48,13 +66,12 @@ function App() {
                         theme="dark"
                         mode="inline"
                         defaultSelectedKeys={["0"]}
-                        
                     >
                         {navs.map((nav, i) => (
                             <Menu.Item key={i}>
-                                <Link to={nav.to}>
-                                    {nav.icon}
-                                    <span>{nav.label}</span>
+                                <Link to={nav?.to}>
+                                    {nav?.icon}
+                                    <span>{nav?.label}</span>
                                 </Link>
                             </Menu.Item>
                         ))}
@@ -70,12 +87,11 @@ function App() {
                             alignItems: "center",
                             position: "sticky",
                             top: "0",
-                            zIndex:"10"
+                            zIndex: "10",
                         }}
                     >
                         <div
                             style={{
-                                // height: "100%",
                                 display: "flex",
                                 alignItems: "center",
                             }}
@@ -97,10 +113,21 @@ function App() {
                                 }}
                             />
                             <Title level={3} style={{ margin: "0" }}>
-                                Finance Tracker
+                                {state?.title}
                             </Title>
                         </div>
-                        {/* <p>Hello</p> */}
+
+                        <div>
+                            <Select
+                                defaultValue={lang[0]}
+                                style={{ width: 120 }}
+                                onChange={changeLang}
+                                options={lang?.map((cur) => ({
+                                    label: cur,
+                                    value: cur,
+                                }))}
+                            />
+                        </div>
                     </Header>
                     <Content
                         style={{

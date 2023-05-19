@@ -10,4 +10,18 @@ const columnLabel = (name: string) => {
     }
 };
 
+export const columnDb = (name: string) => {
+    const findDbName: { show: string; db: string } | undefined = columns?.find(
+        (column) => column.show === name
+    );
+
+    if (findDbName) {
+        return findDbName["db"];
+    }else{
+        return "0"
+    }
+};
+
 export default columnLabel;
+
+

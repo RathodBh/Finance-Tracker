@@ -1,0 +1,20 @@
+{
+    "title":"Finance Tracker",
+    "add": "Add Transaction",
+    "showTransaction": "Show Transaction",
+    "transDate": "Transaction Date",
+    "monthYear": "Month Year",
+    "transactionType": "Transaction Type",
+    "fromAccount": "From Account",
+    "toAccount": "To Account",
+    "amount": "Amount",
+    "action": "Action",
+    "receipt": "Receipt",
+    "notes": "Notes",
+    "edit": "Edit",
+    "delete": "Delete",
+    "deleteConfirm": "Are you sure want to delete this transaction ?",
+    "yes": "Yes",
+    "no": "No",
+    "editTitle": "Edit Transaction"
+}

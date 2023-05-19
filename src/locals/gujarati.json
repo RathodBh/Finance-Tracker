@@ -1,0 +1,20 @@
+{
+    "title":"ફાયનાન્સ ટ્રેકર",
+    "add": "વ્યવહાર ઉમેરો",
+    "showTransaction": "વ્યવહાર બતાવો",
+    "transDate": "વ્યવહાર તારીખ",
+    "monthYear": "મહિનો વર્ષ",
+    "transactionType": "વ્યવહાર પ્રકાર",
+    "fromAccount": "ખાતામાંથી",
+    "toAccount": "ખાતામાં",
+    "amount": "રકમ",
+    "action": "કામ",
+    "receipt": "રસીદ",
+    "notes": "નોંધો",
+    "edit": "ફેરફાર કરો",
+    "delete": "કાઢી નાખો",
+    "deleteConfirm": "શું તમે ખરેખર આ સંબંધ કાઢી નાખવા માંગો છો?",
+    "yes": "હા",
+    "no": "ના",
+    "editTitle": "વ્યવહાર સંપાદિત કરો"
+}

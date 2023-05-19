@@ -12,11 +12,11 @@ export const transactionSlice = createSlice({
         addTransaction: (state, action) => {
             const data = action.payload;
             data.id = new Date().getTime();
-            return {...state, value: data}
+            return {...state, value: [...current(state.value),data]}
         },
         updateTransaction: (state, action) => {
             const data = action.payload;
-            const newData = current(state.value).map((cur) => {
+            const newData = current(state.value)?.map((cur) => {
                 if (cur.id === parseInt(data.id as string)) {
                     return { ...data };
                 }
@@ -26,7 +26,7 @@ export const transactionSlice = createSlice({
         },
         deleteTransaction: (state, action) => {
             const id: number = parseInt(action.payload);
-            const data = current(state.value).filter((cur) => cur.id !== id)
+            const data = current(state.value)?.filter((cur) => cur?.id !== id)
             return { ...state, value: data };
         },
     },
