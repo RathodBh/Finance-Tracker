@@ -4,11 +4,6 @@ import { useDispatch } from "react-redux";
 import { addUser } from "../../store/Slices/usersSlice";
 import { Link } from "react-router-dom";
 
-interface DataNodeType {
-    value: string;
-    label: string;
-    children?: DataNodeType[];
-}
 
 const formItemLayout = {
     labelCol: {
@@ -45,14 +40,14 @@ const SignUp: React.FC = () => {
 
     return (
         <>
-            <div style={{ width: "100%" }}>
+            <div style={{ width: "100vw" }}>
                 <h1 style={{ textAlign: "center" }}>SignUp</h1>
                 <Form
                     {...formItemLayout}
                     form={form}
                     name="register"
                     onFinish={onFinish}
-                    style={{ width: "60vw" }}
+                    style={{ width: "76%" }}
                     scrollToFirstError
                 >
                     <Form.Item

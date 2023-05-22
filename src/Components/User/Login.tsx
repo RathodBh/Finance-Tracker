@@ -1,6 +1,6 @@
 import { Button, Form, Input, message } from "antd";
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState } from "../../store/Index";
 import { Link, useNavigate } from "react-router-dom";
 import msg from "../../utils/generateMessage";
@@ -36,11 +36,7 @@ const Login: React.FC = () => {
     const [messageApi, contextHolder] = message.useMessage();
 
     const onFinish = (values: any) => {
-        console.log(
-            "🚀 ~ file: Login.tsx:37 ~ onFinish ~ values:",
-            values,
-            users
-        );
+        
         const valid_user = users?.find(
             (user) =>
                 user.email === values.email && user.password === values.password
@@ -58,14 +54,14 @@ const Login: React.FC = () => {
     return (
         <>
             {contextHolder}
-            <div style={{ width: "100%" }}>
+            <div style={{ width: "100vw" }}>
                 <h1 style={{ textAlign: "center" }}>Login</h1>
                 <Form
                     {...formItemLayout}
                     form={form}
                     name="register"
                     onFinish={onFinish}
-                    style={{ width: "60vw" }}
+                    style={{ width: "76%" }}
                     scrollToFirstError
                 >
                     <Form.Item

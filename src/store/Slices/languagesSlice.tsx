@@ -1,4 +1,4 @@
-import { createSlice, current } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 import English from "../../locals/english.json";
 import Hindi from "../../locals/hindi.json";
 import Gujarati from "../../locals/gujarati.json";

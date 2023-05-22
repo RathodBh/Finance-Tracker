@@ -11,7 +11,6 @@ import ShowTransaction from "./Components/Transactions/ShowTransaction";
 import SignUp from "./Components/User/SignUp";
 import Login from "./Components/User/Login";
 import PrivateRoutes, { CheckLoginAuth } from "./utils/PrivateRoute";
-import Logout from "./Components/User/Logout"
 
 const RoutesFile = () => {
     return (
@@ -25,7 +24,6 @@ const RoutesFile = () => {
                 <Route path="/transaction" element={<TransactionForm />} />
                 <Route path="/transaction/:id" element={<TransactionForm />} />
                 <Route path="/show-transaction" element={<ShowTransaction />} />
-                <Route path="/logout" element={<Logout />} />
             </Route>
             <Route element={<CheckLoginAuth />}>
                 <Route path="/login" element={<Login />} />
