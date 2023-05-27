@@ -1,0 +1,25 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "run-seed": "npx sequelize-cli db:seed:all",
+    "undo-seed": "npx sequelize-cli db:seed:undo:all",
+    "undo-migrate": "npx sequelize-cli db:migrate:undo:all",
+    "run-migrate": "npx sequelize-cli db:migrate:all",
+    "start": "nodemon index",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "BH",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "express": "^4.18.2",
+    "mysql2": "^3.3.2",
+    "nodemon": "^2.0.22",
+    "sequelize": "^6.31.1",
+    "sequelize-cli": "^6.6.0"
+  }
+}

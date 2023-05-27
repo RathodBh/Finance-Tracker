@@ -1,10 +1,10 @@
-import { Button, Form, Input, message } from "antd";
+import { Button, Form, Input } from "antd";
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../store/Index";
-import { Link, useNavigate } from "react-router-dom";
-import msg from "../../utils/generateMessage";
-import generateToken from "../../utils/generateToken";
+import { useDispatch } from "react-redux";
+import { addUser } from "../../store/Slices/usersSlice";
+import { Link } from "react-router-dom";
+
+
 const formItemLayout = {
     labelCol: {
         xs: { span: 24 },
@@ -29,43 +29,25 @@ const tailFormItemLayout = {
     },
 };
 
-const Login: React.FC = () => {
+const SignUp: React.FC = () => {
     const [form] = Form.useForm();
-    const users = useSelector((state: RootState) => state.users.value);
-    const navigate = useNavigate();
-    const [messageApi, contextHolder] = message.useMessage();
+    const dispatch =useDispatch()
 
     const onFinish = (values: any) => {
-        console.log(
-            "🚀 ~ file: Login.tsx:37 ~ onFinish ~ values:",
-            values,
-            users
-        );
-        const valid_user = users?.find(
-            (user) =>
-                user.email === values.email && user.password === values.password
-        );
-        if (valid_user) {
-            msg(messageApi, "Login successfully");
-            const token = generateToken();
-            localStorage.setItem("token", JSON.stringify(token));
-            navigate("/transaction");
-        } else {
-            msg(messageApi, "Invalid email and password", "error");
-        }
+        dispatch(addUser(values))
+        console.log("Received values of form: ", values);
     };
 
     return (
         <>
-            {contextHolder}
-            <div style={{ width: "100%" }}>
-                <h1 style={{ textAlign: "center" }}>Login</h1>
+            <div style={{ width: "100vw" }}>
+                <h1 style={{ textAlign: "center" }}>SignUp</h1>
                 <Form
                     {...formItemLayout}
                     form={form}
                     name="register"
                     onFinish={onFinish}
-                    style={{ width: "60vw" }}
+                    style={{ width: "76%" }}
                     scrollToFirstError
                 >
                     <Form.Item
@@ -99,13 +81,43 @@ const Login: React.FC = () => {
                         <Input.Password />
                     </Form.Item>
 
+                    <Form.Item
+                        name="confirm"
+                        label="Confirm Password"
+                        dependencies={["password"]}
+                        hasFeedback
+                        rules={[
+                            {
+                                required: true,
+                                message: "Please confirm your password!",
+                            },
+                            ({ getFieldValue }) => ({
+                                validator(_, value) {
+                                    if (
+                                        !value ||
+                                        getFieldValue("password") === value
+                                    ) {
+                                        return Promise.resolve();
+                                    }
+                                    return Promise.reject(
+                                        new Error(
+                                            "The two passwords that you entered do not match!"
+                                        )
+                                    );
+                                },
+                            }),
+                        ]}
+                    >
+                        <Input.Password />
+                    </Form.Item>
+
                     <Form.Item {...tailFormItemLayout}>
                         <Button type="primary" htmlType="submit">
-                            Login
+                            Register
                         </Button>
-                        <Link to="/register">
+                        <Link to="/login">
                             <Button type="link">
-                                Dont'have account? Register
+                                Already have an account? Login
                             </Button>
                         </Link>
                     </Form.Item>
@@ -115,4 +127,4 @@ const Login: React.FC = () => {
     );
 };
 
-export default Login;
+export default SignUp;
