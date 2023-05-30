@@ -8,7 +8,6 @@ const show = async (req, res) => {
 };
 
 const showAll = async (req, res) => {
-    console.log("Show All", models);
     const allData = await User.findAll({
         include: [
             {
@@ -27,13 +26,14 @@ const showUser = async (req, res) => {
 
 const addUser = async (req, res) => {
     const data = req.body;
-    if (Array.isArray(data)) {
-        const allData = await User.bulkCreate(data);
-        res.json({ allData });
-    } else {
+    
+    // if (Array.isArray(data)) {
+    //     const allData = await User.bulkCreate(data);
+    //     res.json({ allData });
+    // } else {
         const allData = await User.create(data);
-        res.json({ allData });
-    }
+        res.json({ data:allData });
+    // }
 };
 
 const addAll = async (req, res) => {
@@ -46,7 +46,7 @@ const addAll = async (req, res) => {
             },
         ],
     });
-    res.json({ allData });
+    res.json({ data:allData });
 };
 
 const patchUser = async (req, res) => {

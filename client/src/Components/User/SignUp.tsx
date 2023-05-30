@@ -1,9 +1,9 @@
-import { Button, Form, Input } from "antd";
+import { Button, Form, Input, message } from "antd";
 import React from "react";
 import { useDispatch } from "react-redux";
-import { addUser } from "../../store/Slices/usersSlice";
-import { Link } from "react-router-dom";
-
+import { newUser } from "../../store/Slices/usersSlice";
+import { Link, useNavigate } from "react-router-dom";
+import msg from "../../utils/generateMessage";
 
 const formItemLayout = {
     labelCol: {
@@ -31,15 +31,26 @@ const tailFormItemLayout = {
 
 const SignUp: React.FC = () => {
     const [form] = Form.useForm();
-    const dispatch =useDispatch()
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const [messageApi, contextHolder] = message.useMessage();
 
-    const onFinish = (values: any) => {
-        dispatch(addUser(values))
-        console.log("Received values of form: ", values);
+    const onFinish = (values: {
+        email: string;
+        password: string;
+        confirm: string;
+    }) => {
+        dispatch(newUser(values));
+        setTimeout(() => {
+            navigate("/login");
+        }, 1500);
+        msg(messageApi, "Registration successfully");
     };
 
     return (
         <>
+            {contextHolder}
+
             <div style={{ width: "100vw" }}>
                 <h1 style={{ textAlign: "center" }}>SignUp</h1>
                 <Form

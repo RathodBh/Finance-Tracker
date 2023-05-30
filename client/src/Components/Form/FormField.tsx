@@ -43,14 +43,9 @@ const FormField = (props: Props) => {
    
 
     const previewImg = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        console.log("OPEN");
         if (e.target.files) {
             const file = e.target.files[0];
             const convertedFile = await toBase64(file);
-            console.log(
-                "🚀 ~ file: FormField.tsx:53 ~ previewImg ~ convertedFile:",
-                convertedFile
-            );
             // if (setValue) setValue(name, convertedFile as string);
             setPreview && setPreview(convertedFile as string);
         }

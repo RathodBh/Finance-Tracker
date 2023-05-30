@@ -3,6 +3,7 @@ const router = express.Router();
 const Transactions = require("../controllers/transactionsController");
 
 router.get("/show", Transactions.show);
+router.post("/add", Transactions.add);
 
 router.get("/show/:id", Transactions.showInfo);
 

@@ -1,11 +1,19 @@
+const models = require("../models");
+const Transactions = models.transactions;
+
 const show = async (req, res) => {
     const allData = await Transactions.findAll();
-    res.json({ allData });
+    res.json({ data: allData });
+};
+const add = async (req, res) => {
+    const data = req.body;
+    const allData = await Transactions.create(data);
+    res.json({ data: allData });
 };
 const showInfo = async (req, res) => {
     const id = req.params.id;
     const allData = await Transactions.findByPk(id);
-    res.json({ allData });
+    res.json({ data: allData });
 };
 const edit = async (req, res) => {
     const id = req.params.id;
@@ -14,7 +22,7 @@ const edit = async (req, res) => {
             id: id,
         },
     });
-    res.json({ allData });
+    res.json({ data: allData });
 };
 
-module.exports = { show, showInfo, edit };
+module.exports = { show, showInfo, edit, add };
